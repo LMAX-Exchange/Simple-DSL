@@ -15,6 +15,7 @@
  */
 package com.lmax.simpledsl;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
@@ -105,6 +106,17 @@ public class DslParams
             }
         }
         throw new IllegalArgumentException(name + " was not a parameter");
+    }
+
+    public int[] valuesAsInts(String name)
+    {
+        String[] values = values(name);
+        int[] intValues = new int[values.length];
+        for (int i = 0; i < values.length; i++)
+        {
+            intValues[i] = Integer.parseInt(values[i]);
+        }
+        return intValues;
     }
 
     public DslParam[] getParams()

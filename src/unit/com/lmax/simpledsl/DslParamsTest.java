@@ -74,6 +74,13 @@ public class DslParamsTest
     }
 
     @Test
+    public void shouldReturnValuesAsIntArray() throws Exception
+    {
+        DslParams params = new DslParams(new String[]{"a: 1, 2, 3"}, new OptionalParam("a").setAllowMultipleValues());
+        Assert.assertArrayEquals(new int[]{1, 2, 3}, params.valuesAsInts("a"));
+    }
+
+    @Test
     public void simpleCaseOfExtractingRequiredParams()
     {
         DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new RequiredParam("a"), new RequiredParam("b"));
