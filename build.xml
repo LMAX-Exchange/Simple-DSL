@@ -4,16 +4,16 @@
     <property name="project.dir" value="${basedir}" />
 
     <property name="build.lib" value="${project.dir}/lib" />
-    <property name="project.src" value="${project.dir}/src/java" />
-    <property name="unit.src" value="${project.dir}/src/unit"/>
+    <property name="project.src" value="${project.dir}/src/main/java" />
+    <property name="test.src" value="${project.dir}/src/test/java"/>
     <property name="build.dir" value="${project.dir}/build" />
     <property name="classes.dir" value="${build.dir}/classes" />
     <property name="dist.dir" value="${build.dir}/dist" />
 
-    <property name="unit.build.dir" value="${build.dir}/unit"/>
+    <property name="test.build.dir" value="${build.dir}/test-classes"/>
     <property name="junit.tmp.dir" value="${build.dir}/tmp"/>
     <property name="reports.dir" value="${build.dir}/reports"/>
-    <property name="unit.reports" value="${reports.dir}/junit"/>
+    <property name="test.reports" value="${reports.dir}/junit"/>
 
     <path id="classpath">
         <pathelement path="${classes.dir}" />
@@ -22,9 +22,9 @@
         </fileset>
     </path>
 
-    <path id="unit-classpath">
+    <path id="test-classpath">
         <pathelement path="${project.dir}"/>
-        <pathelement path="${unit.build.dir}" />
+        <pathelement path="${test.build.dir}" />
         <path refid="classpath" />
     </path>
 
@@ -35,24 +35,21 @@
         <delete includeemptydirs="true" failonerror="false">
             <fileset dir="${build.dir}" includes="**/*" />
         </delete>
-
-        <mkdir dir="${classes.dir}" />
-        <mkdir dir="${dist.dir}" />
-        <mkdir dir="${unit.build.dir}" />
-        <mkdir dir="${junit.tmp.dir}" />
-        <mkdir dir="${unit.reports}" />
     </target>
 
     <target name="compile" >
+        <mkdir dir="${classes.dir}" />
         <compile destdir="${classes.dir}" srcpath="${project.src}" classpathref="classpath"/>
     </target>
 
     <target name="unit-test" depends="compile, compile-tests">
         <mkdir dir="${junit.tmp.dir}" />
-        <test srcdir="${unit.src}" classpathref="unit-classpath" reportsdir="${unit.reports}"/>
+        <mkdir dir="${test.reports}" />
+        <test srcdir="${test.src}" classpathref="test-classpath" reportsdir="${test.reports}"/>
     </target>
 
     <target name="assemble">
+        <mkdir dir="${dist.dir}" />
         <jar destfile="${dist.dir}/simple-dsl.jar">
             <fileset dir="${classes.dir}">
                 <include name="com/**/*.*" />
@@ -66,7 +63,8 @@
     </target>
 
     <target name="compile-tests">
-        <compile destdir="${unit.build.dir}" srcpath="${unit.src}" classpathref="unit-classpath" />
+        <mkdir dir="${test.build.dir}" />
+        <compile destdir="${test.build.dir}" srcpath="${test.src}" classpathref="test-classpath" />
     </target>
 
     <macrodef name="compile">
