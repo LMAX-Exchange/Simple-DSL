@@ -15,7 +15,6 @@
  */
 package com.lmax.simpledsl;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,6 +87,11 @@ public class DslParams
     {
         String value = value(name);
         return value != null ? new BigDecimal(value) : null;
+    }
+
+    public double valueAsDouble(String name)
+    {
+        return Double.valueOf(value(name));
     }
 
     public String valueAsParam(String name)

@@ -53,6 +53,13 @@ public class DslParamsTest
     }
 
     @Test
+    public void shouldReturnValueAsDouble()
+    {
+        DslParams params = new DslParams(new String[]{"a=1.23"}, new RequiredParam("a"));
+        Assert.assertEquals(1.23d, params.valueAsDouble("a"), 0d);
+    }
+
+    @Test
     public void shouldReturnNullValueWhenBigDecimalIsNotFound()
     {
         DslParams params = new DslParams(new String[]{}, new OptionalParam("a"));
