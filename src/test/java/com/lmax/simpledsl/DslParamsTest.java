@@ -22,90 +22,96 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 public class DslParamsTest
 {
     @Test
     public void shouldReturnValueAsInt()
     {
         DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"));
-        Assert.assertEquals(1, params.valueAsInt("a"));
+        assertEquals(1, params.valueAsInt("a"));
     }
 
     @Test
     public void shouldReturnValueAsLong()
     {
         DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"));
-        Assert.assertEquals(1L, params.valueAsLong("a"));
+        assertEquals(1L, params.valueAsLong("a"));
     }
 
     @Test
     public void shouldReturnValueAsBoolean()
     {
         DslParams params = new DslParams(new String[]{"a=true"}, new RequiredParam("a"));
-        Assert.assertTrue(params.valueAsBoolean("a"));
+        assertTrue(params.valueAsBoolean("a"));
     }
 
     @Test
     public void shouldReturnValueAsBigDecimal()
     {
         DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"));
-        Assert.assertEquals(0, BigDecimal.ONE.compareTo(params.valueAsBigDecimal("a")));
+        assertEquals(0, BigDecimal.ONE.compareTo(params.valueAsBigDecimal("a")));
     }
 
     @Test
     public void shouldReturnValueAsDouble()
     {
         DslParams params = new DslParams(new String[]{"a=1.23"}, new RequiredParam("a"));
-        Assert.assertEquals(1.23d, params.valueAsDouble("a"), 0d);
+        assertEquals(1.23d, params.valueAsDouble("a"), 0d);
     }
 
     @Test
     public void shouldReturnNullValueWhenBigDecimalIsNotFound()
     {
         DslParams params = new DslParams(new String[]{}, new OptionalParam("a"));
-        Assert.assertNull(params.valueAsBigDecimal("a"));
+        assertNull(params.valueAsBigDecimal("a"));
     }
 
     @Test
     public void shouldReturnValueAsParamForOptionalValueThatWasSpecified() throws Exception
     {
         DslParams params = new DslParams(new String[]{"a: value"}, new OptionalParam("a"));
-        Assert.assertEquals("a: value", params.valueAsParam("a"));
+        assertEquals("a: value", params.valueAsParam("a"));
     }
 
     @Test
     public void shouldReturnNullValueAsParamWhenOptionalParamNotSpecified() throws Exception
     {
         DslParams params = new DslParams(new String[]{}, new OptionalParam("a"));
-        Assert.assertNull(params.valueAsParam("a"));
+        assertNull(params.valueAsParam("a"));
     }
 
     @Test
     public void shouldReturnValuesAsIntArray() throws Exception
     {
         DslParams params = new DslParams(new String[]{"a: 1, 2, 3"}, new OptionalParam("a").setAllowMultipleValues());
-        Assert.assertArrayEquals(new int[]{1, 2, 3}, params.valuesAsInts("a"));
+        assertArrayEquals(new int[]{1, 2, 3}, params.valuesAsInts("a"));
     }
 
     @Test
     public void shouldReturnValuesAsLongArray() throws Exception
     {
         DslParams params = new DslParams(new String[]{"a: 1, 2, 3"}, new OptionalParam("a").setAllowMultipleValues());
-        Assert.assertArrayEquals(new long[]{1, 2, 3}, params.valuesAsLongs("a"));
+        assertArrayEquals(new long[]{1, 2, 3}, params.valuesAsLongs("a"));
     }
 
     @Test
     public void shouldReturnValuesAsBigDecimalArray() throws Exception
     {
         DslParams params = new DslParams(new String[]{"a: 1, 2.23, 3"}, new OptionalParam("a").setAllowMultipleValues());
-        Assert.assertArrayEquals(new BigDecimal[]{new BigDecimal("1"), new BigDecimal("2.23"), new BigDecimal("3")}, params.valuesAsBigDecimals("a"));
+        assertArrayEquals(new BigDecimal[]{new BigDecimal("1"), new BigDecimal("2.23"), new BigDecimal("3")}, params.valuesAsBigDecimals("a"));
     }
 
     @Test
     public void shouldReturnValuesAsDoubleArray() throws Exception
     {
         DslParams params = new DslParams(new String[]{"a: 1, 2.23, 3"}, new OptionalParam("a").setAllowMultipleValues());
-        assertArrayEquals(new double[]{ 1, 2.23, 3 }, params.valuesAsDoubles("a"));
+        assertDoubleArrayEquals(new double[]{1, 2.23, 3}, params.valuesAsDoubles("a"));
     }
 
     @Test
@@ -113,8 +119,8 @@ public class DslParamsTest
     {
         DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new RequiredParam("a"), new RequiredParam("b"));
 
-        Assert.assertEquals("1", params.value("a"));
-        Assert.assertEquals("2", params.value("b"));
+        assertEquals("1", params.value("a"));
+        assertEquals("2", params.value("b"));
     }
 
     @Test
@@ -122,8 +128,8 @@ public class DslParamsTest
     {
         DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new OptionalParam("a"), new OptionalParam("b"));
 
-        Assert.assertEquals("1", params.value("a"));
-        Assert.assertEquals("2", params.value("b"));
+        assertEquals("1", params.value("a"));
+        assertEquals("2", params.value("b"));
     }
 
     @Test
@@ -131,8 +137,8 @@ public class DslParamsTest
     {
         DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new RequiredParam("a"), new OptionalParam("b"));
 
-        Assert.assertEquals("1", params.value("a"));
-        Assert.assertEquals("2", params.value("b"));
+        assertEquals("1", params.value("a"));
+        assertEquals("2", params.value("b"));
     }
 
     @Test
@@ -140,7 +146,7 @@ public class DslParamsTest
     {
         DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new RequiredParam("a"), new OptionalParam("b"));
 
-        Assert.assertTrue(params.hasValue("b"));
+        assertTrue(params.hasValue("b"));
     }
 
     @Test
@@ -148,7 +154,7 @@ public class DslParamsTest
     {
         DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"), new OptionalParam("b"));
 
-        Assert.assertFalse(params.hasValue("b"));
+        assertFalse(params.hasValue("b"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -171,9 +177,9 @@ public class DslParamsTest
                                          new RequiredParam("b").setAllowMultipleValues(),
                                          new RequiredParam("c"));
 
-        Assert.assertEquals("1", params.value("a"));
-        Assert.assertArrayEquals(new String[]{"2", "3"}, params.values("b"));
-        Assert.assertEquals("4", params.value("c"));
+        assertEquals("1", params.value("a"));
+        assertArrayEquals(new String[]{"2", "3"}, params.values("b"));
+        assertEquals("4", params.value("c"));
     }
 
     @Test
@@ -184,9 +190,9 @@ public class DslParamsTest
                                          new RequiredParam("b").setAllowMultipleValues(),
                                          new RequiredParam("c"));
 
-        Assert.assertEquals("1", params.value("a"));
-        Assert.assertArrayEquals(new String[]{"2", "3"}, params.values("b"));
-        Assert.assertEquals("4", params.value("c"));
+        assertEquals("1", params.value("a"));
+        assertArrayEquals(new String[]{"2", "3"}, params.values("b"));
+        assertEquals("4", params.value("c"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -199,14 +205,14 @@ public class DslParamsTest
     public void hasValueDetectsPresenceOfParamsWithMultipleValuesAllowed() throws Exception
     {
         DslParams params = new DslParams(new String[]{"a=1", "a=2"}, new OptionalParam("a").setAllowMultipleValues());
-        Assert.assertTrue(params.hasValue("a"));
+        assertTrue(params.hasValue("a"));
     }
 
     @Test
     public void hasValueDetectsAbsenceOfParamsWithMultipleValuesAllowed() throws Exception
     {
         DslParams params = new DslParams(new String[0], new OptionalParam("a").setAllowMultipleValues());
-        Assert.assertFalse(params.hasValue("a"));
+        assertFalse(params.hasValue("a"));
     }
 
     @Test
@@ -218,10 +224,10 @@ public class DslParamsTest
                                          new OptionalParam("c").setAllowMultipleValues(),
                                          new OptionalParam("d"));
 
-        Assert.assertEquals("1", params.value("a"));
-        Assert.assertArrayEquals(new String[]{"2", "3"}, params.values("b"));
-        Assert.assertArrayEquals(new String[]{"4", "6"}, params.values("c"));
-        Assert.assertEquals("5", params.value("d"));
+        assertEquals("1", params.value("a"));
+        assertArrayEquals(new String[]{"2", "3"}, params.values("b"));
+        assertArrayEquals(new String[]{"4", "6"}, params.values("c"));
+        assertEquals("5", params.value("d"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -233,8 +239,8 @@ public class DslParamsTest
     @Test
     public void shouldIgnoreNullArgumentsAmongstOptionalParameters() throws Exception {
         final DslParams params = new DslParams(new String[]{null, "a=1", null, "b=2", null}, new OptionalParam("a"), new OptionalParam("b"));
-        Assert.assertEquals("1", params.value("a"));
-        Assert.assertEquals("2", params.value("b"));
+        assertEquals("1", params.value("a"));
+        assertEquals("2", params.value("b"));
     }
 
     @Test
@@ -260,15 +266,15 @@ public class DslParamsTest
         DslParams.setValueReplacer(valueReplacer);
 
         DslParams params = new DslParams(new String[]{"a: ${valueToReplace}"}, new RequiredParam("a"));
-        Assert.assertEquals("newValue", params.value("a"));
+        assertEquals("newValue", params.value("a"));
     }
 
-    private void assertArrayEquals(final double[] expected, final double[] actual)
+    private void assertDoubleArrayEquals(final double[] expected, final double[] actual)
     {
-        Assert.assertEquals(expected.length, actual.length);
+        assertEquals(expected.length, actual.length);
         for (int i = 0; i < expected.length; i++)
         {
-            Assert.assertEquals(expected[i], actual[i], 0d);
+            assertEquals(expected[i], actual[i], 0d);
         }
     }
 
