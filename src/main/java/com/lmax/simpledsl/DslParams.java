@@ -115,12 +115,45 @@ public class DslParams
     public int[] valuesAsInts(String name)
     {
         String[] values = values(name);
-        int[] intValues = new int[values.length];
+        int[] parsedValues = new int[values.length];
         for (int i = 0; i < values.length; i++)
         {
-            intValues[i] = Integer.parseInt(values[i]);
+            parsedValues[i] = Integer.parseInt(values[i]);
         }
-        return intValues;
+        return parsedValues;
+    }
+
+    public long[] valuesAsLongs(String name)
+    {
+        String[] values = values(name);
+        long[] parsedValues = new long[values.length];
+        for (int i = 0; i < values.length; i++)
+        {
+            parsedValues[i] = Long.parseLong(values[i]);
+        }
+        return parsedValues;
+    }
+
+    public BigDecimal[] valuesAsBigDecimals(String name)
+    {
+        String[] values = values(name);
+        BigDecimal[] parsedValues = new BigDecimal[values.length];
+        for (int i = 0; i < values.length; i++)
+        {
+            parsedValues[i] = new BigDecimal(values[i]);
+        }
+        return parsedValues;
+    }
+
+    public double[] valuesAsDoubles(String name)
+    {
+        String[] values = values(name);
+        double[] parsedValues = new double[values.length];
+        for (int i = 0; i < values.length; i++)
+        {
+            parsedValues[i] = Double.parseDouble(values[i]);
+        }
+        return parsedValues;
     }
 
     public DslParam[] getParams()

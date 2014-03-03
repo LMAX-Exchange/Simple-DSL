@@ -88,6 +88,27 @@ public class DslParamsTest
     }
 
     @Test
+    public void shouldReturnValuesAsLongArray() throws Exception
+    {
+        DslParams params = new DslParams(new String[]{"a: 1, 2, 3"}, new OptionalParam("a").setAllowMultipleValues());
+        Assert.assertArrayEquals(new long[]{1, 2, 3}, params.valuesAsLongs("a"));
+    }
+
+    @Test
+    public void shouldReturnValuesAsBigDecimalArray() throws Exception
+    {
+        DslParams params = new DslParams(new String[]{"a: 1, 2.23, 3"}, new OptionalParam("a").setAllowMultipleValues());
+        Assert.assertArrayEquals(new BigDecimal[]{new BigDecimal("1"), new BigDecimal("2.23"), new BigDecimal("3")}, params.valuesAsBigDecimals("a"));
+    }
+
+    @Test
+    public void shouldReturnValuesAsDoubleArray() throws Exception
+    {
+        DslParams params = new DslParams(new String[]{"a: 1, 2.23, 3"}, new OptionalParam("a").setAllowMultipleValues());
+        assertArrayEquals(new double[]{ 1, 2.23, 3 }, params.valuesAsDoubles("a"));
+    }
+
+    @Test
     public void simpleCaseOfExtractingRequiredParams()
     {
         DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new RequiredParam("a"), new RequiredParam("b"));
@@ -240,6 +261,15 @@ public class DslParamsTest
 
         DslParams params = new DslParams(new String[]{"a: ${valueToReplace}"}, new RequiredParam("a"));
         Assert.assertEquals("newValue", params.value("a"));
+    }
+
+    private void assertArrayEquals(final double[] expected, final double[] actual)
+    {
+        Assert.assertEquals(expected.length, actual.length);
+        for (int i = 0; i < expected.length; i++)
+        {
+            Assert.assertEquals(expected[i], actual[i], 0d);
+        }
     }
 
     private static class PropertyBasedValueReplacer implements ValueReplacer
