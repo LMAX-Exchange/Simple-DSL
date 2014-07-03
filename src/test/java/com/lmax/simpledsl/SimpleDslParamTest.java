@@ -18,12 +18,12 @@ package com.lmax.simpledsl;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class DslParamTest
+public class SimpleDslParamTest
 {
     @Test
     public void testGetValueReturnsTheValueAdded()
     {
-        DslParam param = new TestParam("foo");
+        SimpleDslParam param = new TestParam("foo");
         param.addValue("12");
         Assert.assertEquals("12", param.getValue());
     }
@@ -31,7 +31,7 @@ public class DslParamTest
     @Test(expected = IllegalArgumentException.class)
     public void testSecondCallToAddValueWhenMultipleValuesNotAllowedThrowsIllegalArgumentException()
     {
-        DslParam param = new TestParam("foo");
+        SimpleDslParam param = new TestParam("foo");
         param.addValue("12");
         param.addValue("12");
     }
@@ -39,7 +39,7 @@ public class DslParamTest
     @Test
     public void testCanAddMultipleValuesWhenMultipleValuesAllowed()
     {
-        DslParam param = new TestParam("foo").setAllowMultipleValues();
+        SimpleDslParam param = new TestParam("foo").setAllowMultipleValues();
         param.addValue("12");
         param.addValue("34");
     }
@@ -47,7 +47,7 @@ public class DslParamTest
     @Test(expected = IllegalArgumentException.class)
     public void testCannotAddMultipleValuesIfAddMultipleValuesHasNotBeenCalled()
     {
-        DslParam param = new TestParam("foo");
+        SimpleDslParam param = new TestParam("foo");
         param.addValue("12");
         param.addValue("34");
     }
@@ -55,7 +55,7 @@ public class DslParamTest
     @Test
     public void testGetValuesReturnsAllTheValuesAdded()
     {
-        DslParam param = new TestParam("foo").setAllowMultipleValues();
+        SimpleDslParam param = new TestParam("foo").setAllowMultipleValues();
         param.addValue("12");
         param.addValue("34");
         Assert.assertArrayEquals(new String[]{"12", "34"}, param.getValues());
@@ -64,14 +64,14 @@ public class DslParamTest
     @Test(expected = IllegalArgumentException.class)
     public void testGetValueThrowsAnExceptionIfTheParamAllowsMultipleValues()
     {
-        DslParam param = new TestParam("foo").setAllowMultipleValues();
+        SimpleDslParam param = new TestParam("foo").setAllowMultipleValues();
         param.getValue();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddingAnAllowedValuesListRestrictsWhichValuesAreAllowed()
     {
-        DslParam param = new TestParam("foo").setAllowedValues("12", "34").setAllowMultipleValues();
+        SimpleDslParam param = new TestParam("foo").setAllowedValues("12", "34").setAllowMultipleValues();
         param.addValue("12");
         param.addValue("34");
         param.addValue("56");
@@ -80,13 +80,13 @@ public class DslParamTest
     @Test
     public void requiredValuesAreMatchedCaseInsensitivelyButReturnedInTheCorrectCase()
     {
-        DslParam param = new TestParam("foo").setAllowedValues("abc", "def").setAllowMultipleValues();
+        SimpleDslParam param = new TestParam("foo").setAllowedValues("abc", "def").setAllowMultipleValues();
         param.addValue("abc");
         param.addValue("DeF");
         Assert.assertArrayEquals(new String[]{"abc", "def"}, param.getValues());
     }
 
-    private static class TestParam extends DslParam
+    private static class TestParam extends SimpleDslParam
     {
         public TestParam(final String name)
         {
@@ -99,10 +99,5 @@ public class DslParamTest
             return null;
         }
 
-        @Override
-        public OptionalParam getAsOptionalParam()
-        {
-            return null;
-        }
     }
 }

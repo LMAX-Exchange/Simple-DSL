@@ -26,14 +26,13 @@ public class RequiredParamTest
         DslParam param = new RequiredParam("foo");
         Assert.assertSame(param, param.getAsRequiredParam());
         Assert.assertTrue(param.isRequired());
-        Assert.assertNull(param.getAsOptionalParam());
     }
 
     @Test
     public void testConsumeAssignsAnArgumentToTheParameter()
     {
         RequiredParam param = new RequiredParam("foo");
-        int position = param.consume(1, "goo = 0", "foo = 1", "bar = 2");
+        int position = param.consume(1, new NameValuePair("goo = 0"), new NameValuePair("foo = 1"), new NameValuePair("bar = 2"));
         Assert.assertEquals(2, position);
         Assert.assertEquals("1", param.getValue());
     }
@@ -42,7 +41,7 @@ public class RequiredParamTest
     public void testConsumeWorksCaseInsensitively()
     {
         RequiredParam param = new RequiredParam("foo");
-        int position = param.consume(1, "goo = 0", "FOO = 1", "bar = 2");
+        int position = param.consume(1, new NameValuePair("goo = 0"), new NameValuePair("FOO = 1"), new NameValuePair("bar = 2"));
         Assert.assertEquals(2, position);
         Assert.assertEquals("1", param.getValue());
     }
@@ -51,7 +50,7 @@ public class RequiredParamTest
     public void testRequiredParametersAreExtractedByPositionAndDoNotNeedToBeNamed()
     {
         RequiredParam param = new RequiredParam("foo");
-        int position = param.consume(1, "0", "1", "2");
+        int position = param.consume(1, new NameValuePair("0"), new NameValuePair("1"), new NameValuePair("2"));
         Assert.assertEquals(2, position);
         Assert.assertEquals("1", param.getValue());
     }
@@ -60,7 +59,7 @@ public class RequiredParamTest
     public void testEdgeCaseOfConsumingTheFirstArgInTheList()
     {
         RequiredParam param = new RequiredParam("goo");
-        int position = param.consume(0, "goo = 0", "bar = 1", "foo = 2");
+        int position = param.consume(0, new NameValuePair("goo = 0"), new NameValuePair("bar = 1"), new NameValuePair("foo = 2"));
         Assert.assertEquals(1, position);
         Assert.assertEquals("0", param.getValue());
     }
@@ -69,46 +68,17 @@ public class RequiredParamTest
     public void testEdgeCaseOfConsumingTheLastArgInTheList()
     {
         RequiredParam param = new RequiredParam("foo");
-        int position = param.consume(2, "goo = 0", "bar = 1", "foo = 2");
+        int position = param.consume(2, new NameValuePair("goo = 0"), new NameValuePair("bar = 1"), new NameValuePair("foo = 2"));
         Assert.assertEquals(3, position);
         Assert.assertEquals("2", param.getValue());
-    }
-
-    @Test
-    public void testConsumeThrowsAnExceptionIfThereAreNotEnoughParams()
-    {
-        RequiredParam param = new RequiredParam("foo");
-        try
-        {
-            param.consume(1, "goo = 0");
-            Assert.fail("Expected IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e)
-        {
-            // expected
-        }
-    }
-
-    @Test
-    public void testConsumeThrowsAnExceptionIfADifferentNamedParamIsThere()
-    {
-        RequiredParam param = new RequiredParam("foo");
-        try
-        {
-            param.consume(1, "goo = 5", "bar = 3");
-            Assert.fail("Expected IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e)
-        {
-            // expected
-        }
     }
 
     @Test
     public void consumeConsumesMultipleParamsUpToTheFirstParamNamedDifferently()
     {
         RequiredParam param = new RequiredParam("foo").setAllowMultipleValues().getAsRequiredParam();
-        int position = param.consume(1, "first param", "foo = 1", "2", "foo = 3", "4", "something else = 5");
+        int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1"), new NameValuePair("2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
+                                     new NameValuePair("something else = 5"));
         Assert.assertEquals(5, position);
         Assert.assertArrayEquals(new String[]{"1", "2", "3", "4"}, param.getValues());
     }
@@ -117,7 +87,8 @@ public class RequiredParamTest
     public void consumeCanConsumeMultipleParamsBySplittingValuesByCommaDelimiter()
     {
         RequiredParam param = new RequiredParam("foo").setAllowMultipleValues().getAsRequiredParam();
-        int position = param.consume(1, "first param", "foo = 1, 2", "foo = 3", "4", "something else = 5");
+        int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1, 2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
+                                     new NameValuePair("something else = 5"));
         Assert.assertEquals(4, position);
         Assert.assertArrayEquals(new String[]{"1", "2", "3", "4"}, param.getValues());
     }
@@ -126,7 +97,8 @@ public class RequiredParamTest
     public void consumeCanConsumeMultipleParamsBySplittingValuesByUserSuppliedDelimiter()
     {
         RequiredParam param = new RequiredParam("foo").setAllowMultipleValues("\\|").getAsRequiredParam();
-        int position = param.consume(1, "first param", "foo = 1| 2", "foo = 3", "4", "something else = 5");
+        int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1| 2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
+                                     new NameValuePair("something else = 5"));
         Assert.assertEquals(4, position);
         Assert.assertArrayEquals(new String[]{"1", "2", "3", "4"}, param.getValues());
     }

@@ -15,35 +15,63 @@
  */
 package com.lmax.simpledsl;
 
-import java.math.BigDecimal;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class DslParams
+public class DslParams extends DslValues
 {
     private static final String USAGE_TOKEN = "-usage";
     private static ValueReplacer valueReplacer;
 
     private final DslParam[] params;
+    private final Map<String,DslParam> paramsByName = new HashMap<String, DslParam>();
 
     public DslParams(String[] args, DslParam... params)
     {
         this.params = params;
-
-        List<RequiredParam> requiredParams = getRequiredParams(params);
-        List<OptionalParam> optionalParams = getOptionalParams(params);
         checkUsage(args, params);
 
-        int currentPosition = 0;
-        for (RequiredParam requiredParam : requiredParams)
+        final NameValuePair[] arguments = parseArguments(args);
+
+        for (final DslParam param : params)
         {
-            currentPosition = requiredParam.consume(currentPosition, args);
+            paramsByName.put(param.getName().toLowerCase(), param);
         }
 
-        for (int i = currentPosition; i < args.length; i++)
+        int currentPosition = 0;
+        for (final DslParam param : params)
         {
-            consumeArg(args[i], optionalParams);
+            if (!param.isRequired() || currentPosition >= arguments.length || !matches(arguments[currentPosition], param))
+            {
+                break;
+            }
+            currentPosition = param.getAsRequiredParam().consume(currentPosition, arguments);
         }
+
+        while (currentPosition < args.length)
+        {
+            if (arguments[currentPosition] == null)
+            {
+                currentPosition++;
+                continue;
+            }
+            final DslParam param = getDslParam(arguments[currentPosition].getName());
+            if (param != null)
+            {
+                currentPosition = param.consume(currentPosition, arguments);
+            }
+            else
+            {
+                throw new IllegalArgumentException("Unexpected argument " + arguments[currentPosition]);
+            }
+        }
+
+        checkAllRequiredParamsSupplied(params);
+    }
+
+    private boolean matches(final NameValuePair argument, final DslParam param)
+    {
+        return argument.getName() == null || param.getName().equalsIgnoreCase(argument.getName());
     }
 
     public static void setValueReplacer(ValueReplacer valueReplacer)
@@ -51,109 +79,46 @@ public class DslParams
         DslParams.valueReplacer = valueReplacer;
     }
 
+    @Override
     public String value(String name)
     {
-        for (DslParam param : params)
+        final DslParam param = getDslParam(name);
+        if (param != null)
         {
-            if (param.getName().equals(name))
+            final String value = param.getAsSimpleDslParam().getValue();
+            if (value != null && valueReplacer != null)
             {
-                final String value = param.getValue();
-                if (value != null && valueReplacer != null)
-                {
-                    return valueReplacer.replace(value);
-                }
-                return value;
+                return valueReplacer.replace(value);
             }
+            return value;
         }
         throw new IllegalArgumentException(name + " was not a parameter");
     }
 
-    public int valueAsInt(String name)
-    {
-        return Integer.parseInt(value(name));
-    }
-
-    public long valueAsLong(String name)
-    {
-        return Long.valueOf(value(name));
-    }
-
-    public boolean valueAsBoolean(String name)
-    {
-        return Boolean.valueOf(value(name));
-    }
-
-    public BigDecimal valueAsBigDecimal(String name)
-    {
-        String value = value(name);
-        return value != null ? new BigDecimal(value) : null;
-    }
-
-    public double valueAsDouble(String name)
-    {
-        return Double.valueOf(value(name));
-    }
-
-    public String valueAsParam(String name)
-    {
-        String value = value(name);
-        return value != null ? name + ": " + value : null;
-    }
-
+    @Override
     public String[] values(String name)
     {
-        for (DslParam param : params)
+        final DslParam param = getDslParam(name);
+        if (param != null)
         {
-            if (param.getName().equals(name))
-            {
-                return param.getValues();
-            }
+            return param.getAsSimpleDslParam().getValues();
         }
         throw new IllegalArgumentException(name + " was not a parameter");
     }
 
-    public int[] valuesAsInts(String name)
+    public RepeatingGroup[] valuesAsGroup(final String groupName)
     {
-        String[] values = values(name);
-        int[] parsedValues = new int[values.length];
-        for (int i = 0; i < values.length; i++)
+        final DslParam param = getDslParam(groupName);
+        if (param == null)
         {
-            parsedValues[i] = Integer.parseInt(values[i]);
+            throw new IllegalArgumentException(groupName + " was not a parameter");
         }
-        return parsedValues;
-    }
-
-    public long[] valuesAsLongs(String name)
-    {
-        String[] values = values(name);
-        long[] parsedValues = new long[values.length];
-        for (int i = 0; i < values.length; i++)
+        final RepeatingParamGroup repeatingParamGroup = param.asRepeatingParamGroup();
+        if (repeatingParamGroup == null)
         {
-            parsedValues[i] = Long.parseLong(values[i]);
+            throw new IllegalArgumentException(groupName + " was not a repeating group");
         }
-        return parsedValues;
-    }
-
-    public BigDecimal[] valuesAsBigDecimals(String name)
-    {
-        String[] values = values(name);
-        BigDecimal[] parsedValues = new BigDecimal[values.length];
-        for (int i = 0; i < values.length; i++)
-        {
-            parsedValues[i] = new BigDecimal(values[i]);
-        }
-        return parsedValues;
-    }
-
-    public double[] valuesAsDoubles(String name)
-    {
-        String[] values = values(name);
-        double[] parsedValues = new double[values.length];
-        for (int i = 0; i < values.length; i++)
-        {
-            parsedValues[i] = Double.parseDouble(values[i]);
-        }
-        return parsedValues;
+        return repeatingParamGroup.values();
     }
 
     public DslParam[] getParams()
@@ -174,67 +139,11 @@ public class DslParams
         new DslParams(args);
     }
 
+    @Override
     public boolean hasValue(String name)
     {
-        for (DslParam param : params)
-        {
-            if (param.getName().equals(name))
-            {
-                return param.allowMultipleValues ? param.getValues().length > 0 : param.getValue() != null;
-            }
-        }
-
-        return false;
-    }
-
-    private static List<RequiredParam> getRequiredParams(final DslParam... params)
-    {
-        List<RequiredParam> requiredParams = new LinkedList<RequiredParam>();
-        for (DslParam param : params)
-        {
-            if (!param.isRequired())
-            {
-                break;
-            }
-            requiredParams.add(param.getAsRequiredParam());
-        }
-        return requiredParams;
-    }
-
-    private static List<OptionalParam> getOptionalParams(final DslParam... params)
-    {
-        List<OptionalParam> optionalParams = new LinkedList<OptionalParam>();
-        int i = 0;
-        for (; i < params.length && params[i].isRequired(); i++)
-        {
-        }
-        for (; i < params.length; i++)
-        {
-            if (params[i].isRequired())
-            {
-                throw new IllegalArgumentException("Required parameters must appear before optional parameters");
-            }
-            optionalParams.add(params[i].getAsOptionalParam());
-        }
-        return optionalParams;
-    }
-
-    private static void consumeArg(final String arg, List<OptionalParam> optionalParams)
-    {
-        if (arg == null)
-        {
-            return;
-        }
-        NameValuePair nameValue = new NameValuePair(arg);
-        for (OptionalParam param : optionalParams)
-        {
-            if (param.matches(nameValue.getName()))
-            {
-                param.addValue(nameValue.getValue());
-                return;
-            }
-        }
-        throw new IllegalArgumentException("Unexpected argument " + arg);
+        final DslParam param = getDslParam(name);
+        return param != null && param.hasValue();
     }
 
     private void checkUsage(String[] args, DslParam... params)
@@ -243,5 +152,31 @@ public class DslParams
         {
             throw new DslParamsUsageException(params);
         }
+    }
+
+    private void checkAllRequiredParamsSupplied(final DslParam[] params)
+    {
+        for (final DslParam param : params)
+        {
+            if (!param.isValid())
+            {
+                throw new IllegalArgumentException("Missing value for parameter: " + param.getName());
+            }
+        }
+    }
+
+    private NameValuePair[] parseArguments(final String[] args)
+    {
+        final NameValuePair[] arguments = new NameValuePair[args.length];
+        for (int i = 0; i < args.length; i++)
+        {
+            arguments[i] = args[i] != null ? new NameValuePair(args[i]) : null;
+        }
+        return arguments;
+    }
+
+    private DslParam getDslParam(final String name)
+    {
+        return name != null ? paramsByName.get(name.toLowerCase()) : null;
     }
 }

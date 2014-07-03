@@ -15,7 +15,7 @@
  */
 package com.lmax.simpledsl;
 
-public class RequiredParam extends DslParam
+public class RequiredParam extends SimpleDslParam
 {
     public RequiredParam(String name)
     {
@@ -29,37 +29,29 @@ public class RequiredParam extends DslParam
     }
 
     @Override
-    public OptionalParam getAsOptionalParam()
+    public boolean isValid()
     {
-        return null;
+        return getValues().length != 0;
     }
 
-    public int consume(final int currentPosition, final String... args)
+    @Override
+    public int consume(final int currentPosition, final NameValuePair... args)
     {
-        if (!consumeSingleParam(args, currentPosition))
+        int position = currentPosition;
+        while (position < args.length && consumeSingleParam(args, position))
         {
-            throw new IllegalArgumentException("Expected required parameter '" + name + "' missing.");
-        }
-        int position = currentPosition + 1;
-
-        if (allowMultipleValues)
-        {
-            while (position < args.length)
+            position++;
+            if (!allowMultipleValues)
             {
-                if (!consumeSingleParam(args, position))
-                {
-                    break;
-                }
-                position++;
+                break;
             }
-
         }
         return position;
     }
 
-    private boolean consumeSingleParam(final String[] args, final int position)
+    private boolean consumeSingleParam(final NameValuePair[] args, final int position)
     {
-        NameValuePair nameValue = new NameValuePair(getArg(args, position));
+        NameValuePair nameValue = getArg(args, position);
         if (!matches(nameValue.getName()))
         {
             return false;
@@ -73,7 +65,7 @@ public class RequiredParam extends DslParam
         return argName == null || name.equalsIgnoreCase(argName);
     }
 
-    private String getArg(final String[] args, final int position)
+    private NameValuePair getArg(final NameValuePair[] args, final int position)
     {
         if (position >= args.length)
         {

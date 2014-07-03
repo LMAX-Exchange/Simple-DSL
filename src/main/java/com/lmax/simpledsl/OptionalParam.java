@@ -15,7 +15,7 @@
  */
 package com.lmax.simpledsl;
 
-public class OptionalParam extends DslParam
+public class OptionalParam extends SimpleDslParam
 {
     private String defaultValue;
 
@@ -31,21 +31,16 @@ public class OptionalParam extends DslParam
     }
 
     @Override
-    public OptionalParam getAsOptionalParam()
-    {
-        return this;
-    }
-
-    @Override
-    public DslParam setDefault(final String defaultValue)
+    public SimpleDslParam setDefault(final String defaultValue)
     {
         this.defaultValue = defaultValue;
         return this;
     }
 
-    public boolean matches(String argName)
+    @Override
+    public String getDefaultValue()
     {
-        return name.equalsIgnoreCase(argName);
+        return defaultValue;
     }
 
     @Override

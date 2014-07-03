@@ -19,11 +19,13 @@ class NameValuePair
 {
     private static final String SPLIT_NAME_VALUE_REGEX = "=|:";
 
+    private final String originalValue;
     private final String name;
     private final String value;
 
     NameValuePair(String argString)
     {
+        originalValue = argString;
         String[] splitArg = (argString + " ").split(SPLIT_NAME_VALUE_REGEX);
         if (splitArg.length == 1)
         {
@@ -46,5 +48,11 @@ class NameValuePair
     public String getValue()
     {
         return value;
+    }
+
+    @Override
+    public String toString()
+    {
+        return originalValue;
     }
 }
