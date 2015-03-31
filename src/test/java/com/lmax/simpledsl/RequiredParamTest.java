@@ -23,7 +23,7 @@ public class RequiredParamTest
     @Test
     public void aRequiredParamShouldIdentifyItselfAsSuch()
     {
-        DslParam param = new RequiredParam("foo");
+        final DslParam param = new RequiredParam("foo");
         Assert.assertSame(param, param.getAsRequiredParam());
         Assert.assertTrue(param.isRequired());
     }
@@ -31,8 +31,8 @@ public class RequiredParamTest
     @Test
     public void testConsumeAssignsAnArgumentToTheParameter()
     {
-        RequiredParam param = new RequiredParam("foo");
-        int position = param.consume(1, new NameValuePair("goo = 0"), new NameValuePair("foo = 1"), new NameValuePair("bar = 2"));
+        final RequiredParam param = new RequiredParam("foo");
+        final int position = param.consume(1, new NameValuePair("goo = 0"), new NameValuePair("foo = 1"), new NameValuePair("bar = 2"));
         Assert.assertEquals(2, position);
         Assert.assertEquals("1", param.getValue());
     }
@@ -40,8 +40,8 @@ public class RequiredParamTest
     @Test
     public void testConsumeWorksCaseInsensitively()
     {
-        RequiredParam param = new RequiredParam("foo");
-        int position = param.consume(1, new NameValuePair("goo = 0"), new NameValuePair("FOO = 1"), new NameValuePair("bar = 2"));
+        final RequiredParam param = new RequiredParam("foo");
+        final int position = param.consume(1, new NameValuePair("goo = 0"), new NameValuePair("FOO = 1"), new NameValuePair("bar = 2"));
         Assert.assertEquals(2, position);
         Assert.assertEquals("1", param.getValue());
     }
@@ -49,8 +49,8 @@ public class RequiredParamTest
     @Test
     public void testRequiredParametersAreExtractedByPositionAndDoNotNeedToBeNamed()
     {
-        RequiredParam param = new RequiredParam("foo");
-        int position = param.consume(1, new NameValuePair("0"), new NameValuePair("1"), new NameValuePair("2"));
+        final RequiredParam param = new RequiredParam("foo");
+        final int position = param.consume(1, new NameValuePair("0"), new NameValuePair("1"), new NameValuePair("2"));
         Assert.assertEquals(2, position);
         Assert.assertEquals("1", param.getValue());
     }
@@ -58,8 +58,8 @@ public class RequiredParamTest
     @Test
     public void testEdgeCaseOfConsumingTheFirstArgInTheList()
     {
-        RequiredParam param = new RequiredParam("goo");
-        int position = param.consume(0, new NameValuePair("goo = 0"), new NameValuePair("bar = 1"), new NameValuePair("foo = 2"));
+        final RequiredParam param = new RequiredParam("goo");
+        final int position = param.consume(0, new NameValuePair("goo = 0"), new NameValuePair("bar = 1"), new NameValuePair("foo = 2"));
         Assert.assertEquals(1, position);
         Assert.assertEquals("0", param.getValue());
     }
@@ -67,8 +67,8 @@ public class RequiredParamTest
     @Test
     public void testEdgeCaseOfConsumingTheLastArgInTheList()
     {
-        RequiredParam param = new RequiredParam("foo");
-        int position = param.consume(2, new NameValuePair("goo = 0"), new NameValuePair("bar = 1"), new NameValuePair("foo = 2"));
+        final RequiredParam param = new RequiredParam("foo");
+        final int position = param.consume(2, new NameValuePair("goo = 0"), new NameValuePair("bar = 1"), new NameValuePair("foo = 2"));
         Assert.assertEquals(3, position);
         Assert.assertEquals("2", param.getValue());
     }
@@ -76,8 +76,8 @@ public class RequiredParamTest
     @Test
     public void consumeConsumesMultipleParamsUpToTheFirstParamNamedDifferently()
     {
-        RequiredParam param = new RequiredParam("foo").setAllowMultipleValues().getAsRequiredParam();
-        int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1"), new NameValuePair("2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
+        final RequiredParam param = new RequiredParam("foo").setAllowMultipleValues().getAsRequiredParam();
+        final int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1"), new NameValuePair("2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
                                      new NameValuePair("something else = 5"));
         Assert.assertEquals(5, position);
         Assert.assertArrayEquals(new String[]{"1", "2", "3", "4"}, param.getValues());
@@ -86,8 +86,8 @@ public class RequiredParamTest
     @Test
     public void consumeCanConsumeMultipleParamsBySplittingValuesByCommaDelimiter()
     {
-        RequiredParam param = new RequiredParam("foo").setAllowMultipleValues().getAsRequiredParam();
-        int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1, 2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
+        final RequiredParam param = new RequiredParam("foo").setAllowMultipleValues().getAsRequiredParam();
+        final int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1, 2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
                                      new NameValuePair("something else = 5"));
         Assert.assertEquals(4, position);
         Assert.assertArrayEquals(new String[]{"1", "2", "3", "4"}, param.getValues());
@@ -96,8 +96,8 @@ public class RequiredParamTest
     @Test
     public void consumeCanConsumeMultipleParamsBySplittingValuesByUserSuppliedDelimiter()
     {
-        RequiredParam param = new RequiredParam("foo").setAllowMultipleValues("\\|").getAsRequiredParam();
-        int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1| 2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
+        final RequiredParam param = new RequiredParam("foo").setAllowMultipleValues("\\|").getAsRequiredParam();
+        final int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1| 2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
                                      new NameValuePair("something else = 5"));
         Assert.assertEquals(4, position);
         Assert.assertArrayEquals(new String[]{"1", "2", "3", "4"}, param.getValues());

@@ -9,7 +9,7 @@ public class RepeatingParamGroup extends DslParam
 {
     private final SimpleDslParam identity;
     private final Map<String, SimpleDslParam> paramsByName = new HashMap<String, SimpleDslParam>();
-    private List<RepeatingGroup> values = new ArrayList<RepeatingGroup>();
+    private final List<RepeatingGroup> values = new ArrayList<RepeatingGroup>();
 
     public RepeatingParamGroup(final RequiredParam firstParam, final SimpleDslParam... params)
     {

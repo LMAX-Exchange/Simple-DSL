@@ -17,7 +17,7 @@ package com.lmax.simpledsl;
 
 public class RequiredParam extends SimpleDslParam
 {
-    public RequiredParam(String name)
+    public RequiredParam(final String name)
     {
         super(name);
     }
@@ -51,7 +51,7 @@ public class RequiredParam extends SimpleDslParam
 
     private boolean consumeSingleParam(final NameValuePair[] args, final int position)
     {
-        NameValuePair nameValue = getArg(args, position);
+        final NameValuePair nameValue = getArg(args, position);
         if (!matches(nameValue.getName()))
         {
             return false;
@@ -60,7 +60,7 @@ public class RequiredParam extends SimpleDslParam
         return true;
     }
 
-    private boolean matches(String argName)
+    private boolean matches(final String argName)
     {
         return argName == null || name.equalsIgnoreCase(argName);
     }

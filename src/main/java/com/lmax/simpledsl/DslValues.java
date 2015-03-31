@@ -8,42 +8,42 @@ public abstract class DslValues
 
     public abstract String[] values(String name);
 
-    public int valueAsInt(String name)
+    public int valueAsInt(final String name)
     {
         return Integer.parseInt(value(name));
     }
 
-    public long valueAsLong(String name)
+    public long valueAsLong(final String name)
     {
         return Long.valueOf(value(name));
     }
 
-    public boolean valueAsBoolean(String name)
+    public boolean valueAsBoolean(final String name)
     {
         return Boolean.valueOf(value(name));
     }
 
-    public BigDecimal valueAsBigDecimal(String name)
+    public BigDecimal valueAsBigDecimal(final String name)
     {
-        String value = value(name);
+        final String value = value(name);
         return value != null ? new BigDecimal(value) : null;
     }
 
-    public double valueAsDouble(String name)
+    public double valueAsDouble(final String name)
     {
         return Double.valueOf(value(name));
     }
 
-    public String valueAsParam(String name)
+    public String valueAsParam(final String name)
     {
-        String value = value(name);
+        final String value = value(name);
         return value != null ? name + ": " + value : null;
     }
 
-    public int[] valuesAsInts(String name)
+    public int[] valuesAsInts(final String name)
     {
-        String[] values = values(name);
-        int[] parsedValues = new int[values.length];
+        final String[] values = values(name);
+        final int[] parsedValues = new int[values.length];
         for (int i = 0; i < values.length; i++)
         {
             parsedValues[i] = Integer.parseInt(values[i]);
@@ -51,10 +51,10 @@ public abstract class DslValues
         return parsedValues;
     }
 
-    public long[] valuesAsLongs(String name)
+    public long[] valuesAsLongs(final String name)
     {
-        String[] values = values(name);
-        long[] parsedValues = new long[values.length];
+        final String[] values = values(name);
+        final long[] parsedValues = new long[values.length];
         for (int i = 0; i < values.length; i++)
         {
             parsedValues[i] = Long.parseLong(values[i]);
@@ -62,10 +62,10 @@ public abstract class DslValues
         return parsedValues;
     }
 
-    public BigDecimal[] valuesAsBigDecimals(String name)
+    public BigDecimal[] valuesAsBigDecimals(final String name)
     {
-        String[] values = values(name);
-        BigDecimal[] parsedValues = new BigDecimal[values.length];
+        final String[] values = values(name);
+        final BigDecimal[] parsedValues = new BigDecimal[values.length];
         for (int i = 0; i < values.length; i++)
         {
             parsedValues[i] = new BigDecimal(values[i]);
@@ -73,10 +73,10 @@ public abstract class DslValues
         return parsedValues;
     }
 
-    public double[] valuesAsDoubles(String name)
+    public double[] valuesAsDoubles(final String name)
     {
-        String[] values = values(name);
-        double[] parsedValues = new double[values.length];
+        final String[] values = values(name);
+        final double[] parsedValues = new double[values.length];
         for (int i = 0; i < values.length; i++)
         {
             parsedValues[i] = Double.parseDouble(values[i]);

@@ -33,91 +33,91 @@ public class DslParamsTest
     @Test
     public void shouldReturnValueAsInt()
     {
-        DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"));
+        final DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"));
         assertEquals(1, params.valueAsInt("a"));
     }
 
     @Test
     public void shouldReturnValueAsLong()
     {
-        DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"));
+        final DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"));
         assertEquals(1L, params.valueAsLong("a"));
     }
 
     @Test
     public void shouldReturnValueAsBoolean()
     {
-        DslParams params = new DslParams(new String[]{"a=true"}, new RequiredParam("a"));
+        final DslParams params = new DslParams(new String[]{"a=true"}, new RequiredParam("a"));
         assertTrue(params.valueAsBoolean("a"));
     }
 
     @Test
     public void shouldReturnValueAsBigDecimal()
     {
-        DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"));
+        final DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"));
         assertEquals(0, BigDecimal.ONE.compareTo(params.valueAsBigDecimal("a")));
     }
 
     @Test
     public void shouldReturnValueAsDouble()
     {
-        DslParams params = new DslParams(new String[]{"a=1.23"}, new RequiredParam("a"));
+        final DslParams params = new DslParams(new String[]{"a=1.23"}, new RequiredParam("a"));
         assertEquals(1.23d, params.valueAsDouble("a"), 0d);
     }
 
     @Test
     public void shouldReturnNullValueWhenBigDecimalIsNotFound()
     {
-        DslParams params = new DslParams(new String[]{}, new OptionalParam("a"));
+        final DslParams params = new DslParams(new String[]{}, new OptionalParam("a"));
         assertNull(params.valueAsBigDecimal("a"));
     }
 
     @Test
     public void shouldReturnValueAsParamForOptionalValueThatWasSpecified() throws Exception
     {
-        DslParams params = new DslParams(new String[]{"a: value"}, new OptionalParam("a"));
+        final DslParams params = new DslParams(new String[]{"a: value"}, new OptionalParam("a"));
         assertEquals("a: value", params.valueAsParam("a"));
     }
 
     @Test
     public void shouldReturnNullValueAsParamWhenOptionalParamNotSpecified() throws Exception
     {
-        DslParams params = new DslParams(new String[]{}, new OptionalParam("a"));
+        final DslParams params = new DslParams(new String[]{}, new OptionalParam("a"));
         assertNull(params.valueAsParam("a"));
     }
 
     @Test
     public void shouldReturnValuesAsIntArray() throws Exception
     {
-        DslParams params = new DslParams(new String[]{"a: 1, 2, 3"}, new OptionalParam("a").setAllowMultipleValues());
+        final DslParams params = new DslParams(new String[]{"a: 1, 2, 3"}, new OptionalParam("a").setAllowMultipleValues());
         assertArrayEquals(new int[]{1, 2, 3}, params.valuesAsInts("a"));
     }
 
     @Test
     public void shouldReturnValuesAsLongArray() throws Exception
     {
-        DslParams params = new DslParams(new String[]{"a: 1, 2, 3"}, new OptionalParam("a").setAllowMultipleValues());
+        final DslParams params = new DslParams(new String[]{"a: 1, 2, 3"}, new OptionalParam("a").setAllowMultipleValues());
         assertArrayEquals(new long[]{1, 2, 3}, params.valuesAsLongs("a"));
     }
 
     @Test
     public void shouldReturnValuesAsBigDecimalArray() throws Exception
     {
-        DslParams params = new DslParams(new String[]{"a: 1, 2.23, 3"}, new OptionalParam("a").setAllowMultipleValues());
+        final DslParams params = new DslParams(new String[]{"a: 1, 2.23, 3"}, new OptionalParam("a").setAllowMultipleValues());
         assertArrayEquals(new BigDecimal[]{new BigDecimal("1"), new BigDecimal("2.23"), new BigDecimal("3")}, params.valuesAsBigDecimals("a"));
     }
 
     @Test
     public void shouldReturnValuesAsDoubleArray() throws Exception
     {
-        DslParams params = new DslParams(new String[]{"a: 1, 2.23, 3"}, new OptionalParam("a").setAllowMultipleValues());
+        final DslParams params = new DslParams(new String[]{"a: 1, 2.23, 3"}, new OptionalParam("a").setAllowMultipleValues());
         assertDoubleArrayEquals(new double[]{1, 2.23, 3}, params.valuesAsDoubles("a"));
     }
 
     @Test
     public void simpleCaseOfExtractingRequiredParams()
     {
-        DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new RequiredParam("a"), new RequiredParam("b"));
+        final DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new RequiredParam("a"), new RequiredParam("b"));
 
         assertEquals("1", params.value("a"));
         assertEquals("2", params.value("b"));
@@ -126,7 +126,7 @@ public class DslParamsTest
     @Test
     public void simpleCaseOfExtractingOptionalParams()
     {
-        DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new OptionalParam("a"), new OptionalParam("b"));
+        final DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new OptionalParam("a"), new OptionalParam("b"));
 
         assertEquals("1", params.value("a"));
         assertEquals("2", params.value("b"));
@@ -135,7 +135,7 @@ public class DslParamsTest
     @Test
     public void simpleCaseOfExtractingRequiredAndOptionalParams()
     {
-        DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new RequiredParam("a"), new OptionalParam("b"));
+        final DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new RequiredParam("a"), new OptionalParam("b"));
 
         assertEquals("1", params.value("a"));
         assertEquals("2", params.value("b"));
@@ -144,7 +144,7 @@ public class DslParamsTest
     @Test
     public void simpleCaseOfTestingForThePresenceOfAParam()
     {
-        DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new RequiredParam("a"), new OptionalParam("b"));
+        final DslParams params = new DslParams(new String[]{"a=1", "b=2"}, new RequiredParam("a"), new OptionalParam("b"));
 
         assertTrue(params.hasValue("b"));
     }
@@ -152,7 +152,7 @@ public class DslParamsTest
     @Test
     public void simpleCaseOfTestingForTheAbsenceOfAParam()
     {
-        DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"), new OptionalParam("b"));
+        final DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"), new OptionalParam("b"));
 
         assertFalse(params.hasValue("b"));
     }
@@ -172,7 +172,7 @@ public class DslParamsTest
     @Test
     public void youCanExtractMultipleRequiredParamsWhenAllParamsAreNamed()
     {
-        DslParams params = new DslParams(new String[]{"a=1", "b=2", "b=3", "c=4"},
+        final DslParams params = new DslParams(new String[]{"a=1", "b=2", "b=3", "c=4"},
                                          new RequiredParam("a"),
                                          new RequiredParam("b").setAllowMultipleValues(),
                                          new RequiredParam("c"));
@@ -185,7 +185,7 @@ public class DslParamsTest
     @Test
     public void youCanExtractMultipleRequiredParamsWhenSubsequentRequiredParamsAreNotNamed()
     {
-        DslParams params = new DslParams(new String[]{"a=1", "b=2", "3", "c=4"},
+        final DslParams params = new DslParams(new String[]{"a=1", "b=2", "3", "c=4"},
                                          new RequiredParam("a"),
                                          new RequiredParam("b").setAllowMultipleValues(),
                                          new RequiredParam("c"));
@@ -198,21 +198,21 @@ public class DslParamsTest
     @Test
     public void hasValueDetectsPresenceOfParamsWithMultipleValuesAllowed() throws Exception
     {
-        DslParams params = new DslParams(new String[]{"a=1", "a=2"}, new OptionalParam("a").setAllowMultipleValues());
+        final DslParams params = new DslParams(new String[]{"a=1", "a=2"}, new OptionalParam("a").setAllowMultipleValues());
         assertTrue(params.hasValue("a"));
     }
 
     @Test
     public void hasValueDetectsAbsenceOfParamsWithMultipleValuesAllowed() throws Exception
     {
-        DslParams params = new DslParams(new String[0], new OptionalParam("a").setAllowMultipleValues());
+        final DslParams params = new DslParams(new String[0], new OptionalParam("a").setAllowMultipleValues());
         assertFalse(params.hasValue("a"));
     }
 
     @Test
     public void youCanExtractMultipleRequiredParamsAndMultipleOptionalParamsWithOptionalParamsInRandomOrder()
     {
-        DslParams params = new DslParams(new String[]{"a=1", "b=2", "b=3", "c=4", "d=5", "c=6"},
+        final DslParams params = new DslParams(new String[]{"a=1", "b=2", "b=3", "c=4", "d=5", "c=6"},
                                          new RequiredParam("a"),
                                          new RequiredParam("b").setAllowMultipleValues(),
                                          new OptionalParam("c").setAllowMultipleValues(),
@@ -252,13 +252,13 @@ public class DslParamsTest
     @Test
     public void callingADslMethodWithUsageArgThrowsAnExceptionContainingTheDslParamsForIntrospection()
     {
-        SimpleDslParam[] params = {new RequiredParam("a"), new OptionalParam("b")};
+        final SimpleDslParam[] params = {new RequiredParam("a"), new OptionalParam("b")};
         try
         {
             new DslParams(new String[]{"-usage"}, params);
             Assert.fail("Should have thrown a DslParamsUsageException");
         }
-        catch (DslParamsUsageException e)
+        catch (final DslParamsUsageException e)
         {
             Assert.assertSame(params, e.getParams());
         }
@@ -267,18 +267,18 @@ public class DslParamsTest
     @Test
     public void shouldReplacePlaceholderValueWithOverride() throws Exception
     {
-        PropertyBasedValueReplacer valueReplacer = new PropertyBasedValueReplacer();
+        final PropertyBasedValueReplacer valueReplacer = new PropertyBasedValueReplacer();
         valueReplacer.addReplacement("${valueToReplace}", "newValue");
         DslParams.setValueReplacer(valueReplacer);
 
-        DslParams params = new DslParams(new String[]{"a: ${valueToReplace}"}, new RequiredParam("a"));
+        final DslParams params = new DslParams(new String[]{"a: ${valueToReplace}"}, new RequiredParam("a"));
         assertEquals("newValue", params.value("a"));
     }
 
     @Test
     public void shouldBeAbleToRetrieveGroupsOfParams() throws Exception
     {
-        DslParams params = new DslParams(new String[]{"a: value", "group: Joe", "value: 1", "group: Jenny", "value: 2"},
+        final DslParams params = new DslParams(new String[]{"a: value", "group: Joe", "value: 1", "group: Jenny", "value: 2"},
                                          new RequiredParam("a"),
                                          new RepeatingParamGroup(new RequiredParam("group"), new RequiredParam("value")));
 
@@ -302,7 +302,7 @@ public class DslParamsTest
     @Test
     public void shouldBeAbleToSpecifyMultipleValuesForParamInGroup() throws Exception
     {
-        DslParams params = new DslParams(new String[]{"a: value", "group: Joe", "group: Jenny", "value: 1", "value: 2"},
+        final DslParams params = new DslParams(new String[]{"a: value", "group: Joe", "group: Jenny", "value: 1", "value: 2"},
                                          new RequiredParam("a"),
                                          new RepeatingParamGroup(new RequiredParam("group"), new OptionalParam("value").setAllowMultipleValues()));
 
@@ -320,7 +320,7 @@ public class DslParamsTest
     @Test
     public void shouldBeAbleToRetrieveGroupsOfParamsWhenSomeOptionalValuesAreOmitted() throws Exception
     {
-        DslParams params = new DslParams(new String[]{"a: value",
+        final DslParams params = new DslParams(new String[]{"a: value",
                                                       "group: Joe", "value: 1",
                                                       "group: Jenny", "optional: X", "value: 2"},
                                          new RequiredParam("a"),
@@ -352,7 +352,7 @@ public class DslParamsTest
     @Test
     public void shouldUseDefaultValuesForOptionalParametersInRepeatingGroups() throws Exception
     {
-        DslParams params = new DslParams(new String[]{"a: value",
+        final DslParams params = new DslParams(new String[]{"a: value",
                                                       "group: Joe", "value: 1",
                                                       "group: Jenny", "optional: X", "value: 2"},
                                          new RequiredParam("a"),
@@ -386,12 +386,12 @@ public class DslParamsTest
     {
         private final Map<String, String> replacements = new HashMap<String, String>();
 
-        public void addReplacement(String oldValue, String newValue)
+        public void addReplacement(final String oldValue, final String newValue)
         {
             replacements.put(oldValue, newValue);
         }
 
-        public String replace(String value)
+        public String replace(final String value)
         {
             final String newValue = replacements.get(value);
             return newValue != null ? newValue : value;

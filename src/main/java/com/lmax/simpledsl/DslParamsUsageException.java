@@ -19,7 +19,7 @@ public class DslParamsUsageException extends RuntimeException
 {
     private final DslParam[] params;
 
-    public DslParamsUsageException(DslParam[] params)
+    public DslParamsUsageException(final DslParam[] params)
     {
         this.params = params;
     }

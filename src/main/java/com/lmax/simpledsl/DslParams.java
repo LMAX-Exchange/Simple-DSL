@@ -26,7 +26,7 @@ public class DslParams extends DslValues
     private final DslParam[] params;
     private final Map<String,DslParam> paramsByName = new HashMap<String, DslParam>();
 
-    public DslParams(String[] args, DslParam... params)
+    public DslParams(final String[] args, final DslParam... params)
     {
         this.params = params;
         checkUsage(args, params);
@@ -74,13 +74,13 @@ public class DslParams extends DslValues
         return argument.getName() == null || param.getName().equalsIgnoreCase(argument.getName());
     }
 
-    public static void setValueReplacer(ValueReplacer valueReplacer)
+    public static void setValueReplacer(final ValueReplacer valueReplacer)
     {
         DslParams.valueReplacer = valueReplacer;
     }
 
     @Override
-    public String value(String name)
+    public String value(final String name)
     {
         final DslParam param = getDslParam(name);
         if (param != null)
@@ -96,7 +96,7 @@ public class DslParams extends DslValues
     }
 
     @Override
-    public String[] values(String name)
+    public String[] values(final String name)
     {
         final DslParam param = getDslParam(name);
         if (param != null)
@@ -134,19 +134,19 @@ public class DslParams extends DslValues
     /**If you have a DSL method that doesn't require any parameters, if you declare it as taking the usual String array and
      * call checkEmpty(), then the -usage trick still works.
      */
-    public static void checkEmpty(String[] args)
+    public static void checkEmpty(final String[] args)
     {
         new DslParams(args);
     }
 
     @Override
-    public boolean hasValue(String name)
+    public boolean hasValue(final String name)
     {
         final DslParam param = getDslParam(name);
         return param != null && param.hasValue();
     }
 
-    private void checkUsage(String[] args, DslParam... params)
+    private void checkUsage(final String[] args, final DslParam... params)
     {
         if (args != null && args.length == 1 && USAGE_TOKEN.equals(args[0]))
         {

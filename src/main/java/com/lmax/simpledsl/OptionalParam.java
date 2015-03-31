@@ -46,7 +46,7 @@ public class OptionalParam extends SimpleDslParam
     @Override
     public String[] getValues()
     {
-        String[] values = super.getValues();
+        final String[] values = super.getValues();
         return values.length > 0 ? values : defaultValue != null ? new String[]{defaultValue} : new String[0];
     }
 }

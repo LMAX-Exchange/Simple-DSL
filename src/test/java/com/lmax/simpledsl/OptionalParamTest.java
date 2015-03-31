@@ -23,7 +23,7 @@ public class OptionalParamTest
     @Test
     public void anOptionalParamShouldIdentifyItselfAsSuch()
     {
-        DslParam param = new OptionalParam("foo");
+        final DslParam param = new OptionalParam("foo");
         Assert.assertFalse(param.isRequired());
         Assert.assertNull(param.getAsRequiredParam());
     }
@@ -31,7 +31,7 @@ public class OptionalParamTest
     @Test
     public void settingADefaultValueShouldNotAffectTheReturnedValueIfTheParameterIsSupplied()
     {
-        SimpleDslParam param = new OptionalParam("foo").setDefault("def");
+        final SimpleDslParam param = new OptionalParam("foo").setDefault("def");
         param.addValue("1");
         Assert.assertEquals("1", param.getValue());
         Assert.assertArrayEquals(new String[]{"1"}, param.getValues());
@@ -40,7 +40,7 @@ public class OptionalParamTest
     @Test
     public void settingADefaultValueShouldMakeGetValueReturnItIfTheParameterIsNotSupplied()
     {
-        SimpleDslParam param = new OptionalParam("foo").setDefault("def");
+        final SimpleDslParam param = new OptionalParam("foo").setDefault("def");
         Assert.assertEquals("def", param.getValue());
         Assert.assertArrayEquals(new String[]{"def"}, param.getValues());
     }
@@ -48,7 +48,7 @@ public class OptionalParamTest
     @Test
     public void getValueShouldReturnNullIfThereIsNoParamAndNoDefault()
     {
-        SimpleDslParam param = new OptionalParam("foo");
+        final SimpleDslParam param = new OptionalParam("foo");
         Assert.assertEquals(null, param.getValue());
         Assert.assertArrayEquals(new String[0], param.getValues());
     }

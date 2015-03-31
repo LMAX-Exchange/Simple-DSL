@@ -23,10 +23,10 @@ class NameValuePair
     private final String name;
     private final String value;
 
-    NameValuePair(String argString)
+    NameValuePair(final String argString)
     {
         originalValue = argString;
-        String[] splitArg = (argString + " ").split(SPLIT_NAME_VALUE_REGEX);
+        final String[] splitArg = (argString + " ").split(SPLIT_NAME_VALUE_REGEX);
         if (splitArg.length == 1)
         {
             name = null;

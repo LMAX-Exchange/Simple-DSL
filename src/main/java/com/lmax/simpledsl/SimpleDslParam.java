@@ -28,7 +28,7 @@ public abstract class SimpleDslParam extends DslParam
     protected boolean allowMultipleValues;
     protected String multipleValueSeparator;
 
-    public SimpleDslParam(String name)
+    public SimpleDslParam(final String name)
     {
         this.name = name;
     }
@@ -45,7 +45,7 @@ public abstract class SimpleDslParam extends DslParam
         return null;
     }
 
-    public SimpleDslParam setAllowedValues(String... allowedValues2)
+    public SimpleDslParam setAllowedValues(final String... allowedValues2)
     {
         this.allowedValues = allowedValues2;
         return this;
@@ -56,14 +56,14 @@ public abstract class SimpleDslParam extends DslParam
         return setAllowMultipleValues(DEFAULT_DELIMITER);
     }
 
-    public SimpleDslParam setAllowMultipleValues(String delimiter)
+    public SimpleDslParam setAllowMultipleValues(final String delimiter)
     {
         allowMultipleValues = true;
         multipleValueSeparator = delimiter;
         return this;
     }
 
-    public SimpleDslParam setDefault(String value)
+    public SimpleDslParam setDefault(final String value)
     {
         throw new UnsupportedOperationException("Cannot set default values for this param");
     }
@@ -86,12 +86,12 @@ public abstract class SimpleDslParam extends DslParam
         return null;
     }
 
-    public void addValue(String value)
+    public void addValue(final String value)
     {
         if (allowMultipleValues)
         {
-            String[] values = value.split(multipleValueSeparator);
-            for (String singleValue : values) {
+            final String[] values = value.split(multipleValueSeparator);
+            for (final String singleValue : values) {
                 addSingleValue(singleValue.trim());
             }
         }
@@ -101,7 +101,7 @@ public abstract class SimpleDslParam extends DslParam
         }
     }
 
-    private void addSingleValue(String value)
+    private void addSingleValue(final String value)
     {
         checkCanAddValue();
         values.add(checkValidValue(value));
@@ -111,7 +111,7 @@ public abstract class SimpleDslParam extends DslParam
     {
         if (allowedValues != null)
         {
-            for (String allowedValue : allowedValues)
+            for (final String allowedValue : allowedValues)
             {
                 if (allowedValue.equalsIgnoreCase(value))
                 {
@@ -137,7 +137,7 @@ public abstract class SimpleDslParam extends DslParam
         {
             throw new IllegalArgumentException("getValues() should be used when multiple values are allowed");
         }
-        String[] strings = getValues();
+        final String[] strings = getValues();
         return strings.length > 0 ? strings[0] : null;
     }
 

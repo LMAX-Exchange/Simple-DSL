@@ -23,7 +23,7 @@ public class NameValuePairTest
     @Test
     public void testSplittingNameAndValueWithEquals()
     {
-        NameValuePair pair = new NameValuePair("a=1");
+        final NameValuePair pair = new NameValuePair("a=1");
         Assert.assertEquals("a", pair.getName());
         Assert.assertEquals("1", pair.getValue());
     }
@@ -31,7 +31,7 @@ public class NameValuePairTest
     @Test
     public void testSplittingNameAndValueWithColon()
     {
-        NameValuePair pair = new NameValuePair("a:1");
+        final NameValuePair pair = new NameValuePair("a:1");
         Assert.assertEquals("a", pair.getName());
         Assert.assertEquals("1", pair.getValue());
     }
@@ -39,7 +39,7 @@ public class NameValuePairTest
     @Test
     public void testTrimmingWhitespace()
     {
-        NameValuePair pair = new NameValuePair(" a = 1 ");
+        final NameValuePair pair = new NameValuePair(" a = 1 ");
         Assert.assertEquals("a", pair.getName());
         Assert.assertEquals("1", pair.getValue());
     }
@@ -47,7 +47,7 @@ public class NameValuePairTest
     @Test
     public void testMultipleSplitTokensArePreservedInTheValue()
     {
-        NameValuePair pair = new NameValuePair("message: ERROR: Something went wrong!");
+        final NameValuePair pair = new NameValuePair("message: ERROR: Something went wrong!");
         Assert.assertEquals("message", pair.getName());
         Assert.assertEquals("ERROR: Something went wrong!", pair.getValue());
     }
@@ -55,7 +55,7 @@ public class NameValuePairTest
     @Test
     public void testUnnamedPairSetsTheNameToNullAndAssignsEverythingToTheValue()
     {
-        NameValuePair pair = new NameValuePair("value without a name");
+        final NameValuePair pair = new NameValuePair("value without a name");
         Assert.assertEquals(null, pair.getName());
         Assert.assertEquals("value without a name", pair.getValue());
     }
@@ -63,7 +63,7 @@ public class NameValuePairTest
     @Test
     public void testEmptyStringIsUsedForAnEmptyValueRatherThanNull()
     {
-        NameValuePair pair = new NameValuePair("name:");
+        final NameValuePair pair = new NameValuePair("name:");
         Assert.assertEquals("name", pair.getName());
         Assert.assertEquals("", pair.getValue());
     }
