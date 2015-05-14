@@ -1,12 +1,32 @@
 package com.lmax.simpledsl;
 
+
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public abstract class DslValues
 {
     public abstract String value(String name);
 
+    public Optional<String> valueAsOptional(String name)
+    {
+        return Optional.ofNullable(value(name));
+    }
+
     public abstract String[] values(String name);
+
+    public List<String> valuesAsList(String name)
+    {
+        return Arrays.asList(values(name));
+    }
+
+    public Optional<List<String>> valuesAsOptional(String name)
+    {
+        final List<String> values = valuesAsList(name);
+        return values.isEmpty() ? Optional.empty() : Optional.of(values);
+    }
 
     public int valueAsInt(final String name)
     {
