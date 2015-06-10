@@ -45,9 +45,9 @@ public abstract class SimpleDslParam extends DslParam
         return null;
     }
 
-    public SimpleDslParam setAllowedValues(final String... allowedValues2)
+    public SimpleDslParam setAllowedValues(final String... allowedValues)
     {
-        this.allowedValues = allowedValues2;
+        this.allowedValues = allowedValues;
         return this;
     }
 

@@ -10,22 +10,22 @@ public abstract class DslValues
 {
     public abstract String value(String name);
 
-    public Optional<String> valueAsOptional(String name)
+    public Optional<String> valueAsOptional(final String name)
     {
         return Optional.ofNullable(value(name));
     }
 
     public abstract String[] values(String name);
 
-    public List<String> valuesAsList(String name)
+    public List<String> valuesAsList(final String name)
     {
         return Arrays.asList(values(name));
     }
 
-    public Optional<List<String>> valuesAsOptional(String name)
+    public Optional<List<String>> valuesAsOptional(final String name)
     {
         final List<String> values = valuesAsList(name);
-        return values.isEmpty() ? Optional.empty() : Optional.of(values);
+        return values.isEmpty() ? Optional.<List<String>>empty() : Optional.of(values);
     }
 
     public int valueAsInt(final String name)
