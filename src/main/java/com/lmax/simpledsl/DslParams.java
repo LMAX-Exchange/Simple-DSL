@@ -67,6 +67,7 @@ public class DslParams extends DslValues
         }
 
         checkAllRequiredParamsSupplied(params);
+        completedParsingArguments();
     }
 
     private boolean matches(final NameValuePair argument, final DslParam param)
@@ -173,6 +174,18 @@ public class DslParams extends DslValues
             arguments[i] = args[i] != null ? new NameValuePair(args[i]) : null;
         }
         return arguments;
+    }
+
+    private void completedParsingArguments()
+    {
+        for (final DslParam param : params)
+        {
+            final SimpleDslParam simpleDslParam = param.getAsSimpleDslParam();
+            if (simpleDslParam != null)
+            {
+                simpleDslParam.completedParsing();
+            }
+        }
     }
 
     private DslParam getDslParam(final String name)

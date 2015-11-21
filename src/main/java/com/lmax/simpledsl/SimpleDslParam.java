@@ -18,6 +18,7 @@ package com.lmax.simpledsl;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class SimpleDslParam extends DslParam
 {
@@ -27,6 +28,8 @@ public abstract class SimpleDslParam extends DslParam
     protected final String name;
     protected boolean allowMultipleValues;
     protected String multipleValueSeparator;
+    private Consumer<String> consumer;
+    private boolean calledConsumer;
 
     public SimpleDslParam(final String name)
     {
@@ -68,6 +71,12 @@ public abstract class SimpleDslParam extends DslParam
         throw new UnsupportedOperationException("Cannot set default values for this param");
     }
 
+    public SimpleDslParam setConsumer(Consumer<String> consumer)
+    {
+        this.consumer = consumer;
+        return this;
+    }
+
     @Override
     public int consume(final int currentPosition, final NameValuePair... args)
     {
@@ -105,6 +114,7 @@ public abstract class SimpleDslParam extends DslParam
     {
         checkCanAddValue();
         values.add(checkValidValue(value));
+        callConsumer(value);
     }
 
     String checkValidValue(final String value)
@@ -144,6 +154,23 @@ public abstract class SimpleDslParam extends DslParam
     public String[] getValues()
     {
         return values.toArray(new String[values.size()]);
+    }
+
+    public void completedParsing()
+    {
+        if (!calledConsumer && getDefaultValue() != null)
+        {
+            callConsumer(getDefaultValue());
+        }
+    }
+
+    private void callConsumer(final String value)
+    {
+        if (consumer != null)
+        {
+            consumer.accept(value);
+            calledConsumer = true;
+        }
     }
 
     @Override
