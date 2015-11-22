@@ -18,6 +18,7 @@ package com.lmax.simpledsl;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public abstract class SimpleDslParam extends DslParam
@@ -28,7 +29,7 @@ public abstract class SimpleDslParam extends DslParam
     protected final String name;
     protected boolean allowMultipleValues;
     protected String multipleValueSeparator;
-    private Consumer<String> consumer;
+    private BiConsumer<String, String> consumer;
     private boolean calledConsumer;
 
     public SimpleDslParam(final String name)
@@ -72,6 +73,12 @@ public abstract class SimpleDslParam extends DslParam
     }
 
     public SimpleDslParam setConsumer(Consumer<String> consumer)
+    {
+        this.consumer = (name, value) -> consumer.accept(value);
+        return this;
+    }
+
+    public SimpleDslParam setConsumer(BiConsumer<String, String> consumer)
     {
         this.consumer = consumer;
         return this;
@@ -168,7 +175,7 @@ public abstract class SimpleDslParam extends DslParam
     {
         if (consumer != null)
         {
-            consumer.accept(value);
+            consumer.accept(getName(), value);
             calledConsumer = true;
         }
     }
