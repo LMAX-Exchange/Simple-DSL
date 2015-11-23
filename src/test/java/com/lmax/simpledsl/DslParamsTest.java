@@ -366,7 +366,7 @@ public class DslParamsTest
     {
         final LinkedList<String> list = new LinkedList<>();
         final Consumer<String> consumer = list::add;
-        final DslParams params = new DslParams(new String[]{}, new OptionalParam("a").setDefault("b").setConsumer(consumer));
+        new DslParams(new String[]{}, new OptionalParam("a").setDefault("b").setConsumer(consumer));
         assertEquals(1, list.size());
         assertEquals("b", list.get(0));
     }

@@ -8,8 +8,8 @@ import java.util.Map;
 public class RepeatingParamGroup extends DslParam
 {
     private final SimpleDslParam identity;
-    private final Map<String, SimpleDslParam> paramsByName = new HashMap<String, SimpleDslParam>();
-    private final List<RepeatingGroup> values = new ArrayList<RepeatingGroup>();
+    private final Map<String, SimpleDslParam> paramsByName = new HashMap<>();
+    private final List<RepeatingGroup> values = new ArrayList<>();
 
     public RepeatingParamGroup(final RequiredParam firstParam, final SimpleDslParam... params)
     {

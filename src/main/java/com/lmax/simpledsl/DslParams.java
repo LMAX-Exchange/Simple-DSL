@@ -23,7 +23,7 @@ public class DslParams extends DslValues
     private static final String USAGE_TOKEN = "-usage";
 
     private final DslParam[] params;
-    private final Map<String,DslParam> paramsByName = new HashMap<String, DslParam>();
+    private final Map<String,DslParam> paramsByName = new HashMap<>();
 
     public DslParams(final String[] args, final DslParam... params)
     {

@@ -7,14 +7,14 @@ import java.util.Map;
 
 public class RepeatingGroup extends DslValues
 {
-    private final Map<String, List<String>> valuesByName = new HashMap<String, List<String>>();
+    private final Map<String, List<String>> valuesByName = new HashMap<>();
 
     public void addValue(final String name, final String value)
     {
         List<String> values = getValues(name);
         if (values == null)
         {
-            values = new ArrayList<String>();
+            values = new ArrayList<>();
             valuesByName.put(name.toLowerCase(), values);
         }
         values.add(value);

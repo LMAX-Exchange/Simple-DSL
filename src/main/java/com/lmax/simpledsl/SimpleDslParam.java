@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 
 public abstract class SimpleDslParam extends DslParam
 {
-    private final List<String> values = new LinkedList<String>();
+    private final List<String> values = new LinkedList<>();
     private static final String DEFAULT_DELIMITER = ",";
     private String[] allowedValues;
     protected final String name;
