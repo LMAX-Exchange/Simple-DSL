@@ -21,7 +21,6 @@ import java.util.Map;
 public class DslParams extends DslValues
 {
     private static final String USAGE_TOKEN = "-usage";
-    private static ValueReplacer valueReplacer;
 
     private final DslParam[] params;
     private final Map<String,DslParam> paramsByName = new HashMap<String, DslParam>();
@@ -75,23 +74,13 @@ public class DslParams extends DslValues
         return argument.getName() == null || param.getName().equalsIgnoreCase(argument.getName());
     }
 
-    public static void setValueReplacer(final ValueReplacer valueReplacer)
-    {
-        DslParams.valueReplacer = valueReplacer;
-    }
-
     @Override
     public String value(final String name)
     {
         final DslParam param = getDslParam(name);
         if (param != null)
         {
-            final String value = param.getAsSimpleDslParam().getValue();
-            if (value != null && valueReplacer != null)
-            {
-                return valueReplacer.replace(value);
-            }
-            return value;
+            return param.getAsSimpleDslParam().getValue();
         }
         throw new IllegalArgumentException(name + " was not a parameter");
     }

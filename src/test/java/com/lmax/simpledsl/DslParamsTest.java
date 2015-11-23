@@ -19,9 +19,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -267,17 +265,6 @@ public class DslParamsTest
     }
 
     @Test
-    public void shouldReplacePlaceholderValueWithOverride() throws Exception
-    {
-        final PropertyBasedValueReplacer valueReplacer = new PropertyBasedValueReplacer();
-        valueReplacer.addReplacement("${valueToReplace}", "newValue");
-        DslParams.setValueReplacer(valueReplacer);
-
-        final DslParams params = new DslParams(new String[]{"a: ${valueToReplace}"}, new RequiredParam("a"));
-        assertEquals("newValue", params.value("a"));
-    }
-
-    @Test
     public void shouldBeAbleToRetrieveGroupsOfParams() throws Exception
     {
         final DslParams params = new DslParams(new String[]{"a: value", "group: Joe", "value: 1", "group: Jenny", "value: 2"},
@@ -390,22 +377,6 @@ public class DslParamsTest
         for (int i = 0; i < expected.length; i++)
         {
             assertEquals(expected[i], actual[i], 0d);
-        }
-    }
-
-    private static class PropertyBasedValueReplacer implements ValueReplacer
-    {
-        private final Map<String, String> replacements = new HashMap<String, String>();
-
-        public void addReplacement(final String oldValue, final String newValue)
-        {
-            replacements.put(oldValue, newValue);
-        }
-
-        public String replace(final String value)
-        {
-            final String newValue = replacements.get(value);
-            return newValue != null ? newValue : value;
         }
     }
 }
