@@ -18,6 +18,9 @@ package com.lmax.simpledsl;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.LinkedList;
+import java.util.function.Consumer;
+
 public class RequiredParamTest
 {
     @Test
@@ -102,4 +105,17 @@ public class RequiredParamTest
         Assert.assertEquals(4, position);
         Assert.assertArrayEquals(new String[]{"1", "2", "3", "4"}, param.getValues());
     }
+
+    @Test
+    public void consumerIsCalledForSingleValue()
+    {
+        final LinkedList<String> list = new LinkedList<>();
+        final Consumer<String> consumer = list::add;
+        final SimpleDslParam param = new RequiredParam("foo").setConsumer(consumer);
+        param.addValue("abc");
+
+        Assert.assertEquals(1, list.size());
+        Assert.assertEquals("abc", list.get(0));
+    }
+
 }

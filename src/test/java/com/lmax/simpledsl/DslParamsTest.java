@@ -20,7 +20,9 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -370,7 +372,16 @@ public class DslParamsTest
         assertEquals("Jenny", groups[1].value("group"));
         assertEquals("2", groups[1].value("value"));
         assertEquals("X", groups[1].value("optional"));
+    }
 
+    @Test
+    public void shouldCallConsumerForDefaultValues() throws Exception
+    {
+        final LinkedList<String> list = new LinkedList<>();
+        final Consumer<String> consumer = list::add;
+        final DslParams params = new DslParams(new String[]{}, new OptionalParam("a").setDefault("b").setConsumer(consumer));
+        assertEquals(1, list.size());
+        assertEquals("b", list.get(0));
     }
 
     private void assertDoubleArrayEquals(final double[] expected, final double[] actual)

@@ -18,6 +18,9 @@ package com.lmax.simpledsl;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.LinkedList;
+import java.util.function.Consumer;
+
 public class OptionalParamTest
 {
     @Test
@@ -52,4 +55,40 @@ public class OptionalParamTest
         Assert.assertEquals(null, param.getValue());
         Assert.assertArrayEquals(new String[0], param.getValues());
     }
+
+    @Test
+    public void consumerIsCalledForSingleValue()
+    {
+        final LinkedList<String> list = new LinkedList<>();
+        final Consumer<String> consumer = list::add;
+        final SimpleDslParam param = new OptionalParam("foo").setConsumer(consumer);
+        param.addValue("abc");
+
+        Assert.assertEquals(1, list.size());
+        Assert.assertEquals("abc", list.get(0));
+    }
+
+    @Test
+    public void consumerIsCalledForDefault()
+    {
+        final LinkedList<String> list = new LinkedList<>();
+        final Consumer<String> consumer = list::add;
+        final SimpleDslParam param = new OptionalParam("foo").setDefault("abc").setConsumer(consumer);
+        param.completedParsing();
+
+        Assert.assertEquals(1, list.size());
+        Assert.assertEquals("abc", list.get(0));
+    }
+
+    @Test
+    public void consumerIsNotCalledForOptionalWithNoDefault()
+    {
+        final LinkedList<String> list = new LinkedList<>();
+        final Consumer<String> consumer = list::add;
+        final SimpleDslParam param = new OptionalParam("foo").setConsumer(consumer);
+        param.completedParsing();
+
+        Assert.assertEquals(0, list.size());
+    }
+
 }

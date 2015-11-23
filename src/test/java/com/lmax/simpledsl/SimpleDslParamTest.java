@@ -18,6 +18,10 @@ package com.lmax.simpledsl;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.LinkedList;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
 public class SimpleDslParamTest
 {
     @Test
@@ -84,6 +88,51 @@ public class SimpleDslParamTest
         param.addValue("abc");
         param.addValue("DeF");
         Assert.assertArrayEquals(new String[]{"abc", "def"}, param.getValues());
+    }
+
+    @Test
+    public void consumerIsCalledForSingleValue()
+    {
+        final LinkedList<String> list = new LinkedList<>();
+        final Consumer<String> consumer = list::add;
+        final SimpleDslParam param = new TestParam("foo").setConsumer(consumer);
+        param.addValue("abc");
+
+        Assert.assertEquals(1, list.size());
+        Assert.assertEquals("abc", list.get(0));
+    }
+
+    @Test
+    public void consumerIsCalledForMultipleValuesInCorrectOrder()
+    {
+        final LinkedList<String> list = new LinkedList<>();
+        final Consumer<String> consumer = list::add;
+        final SimpleDslParam param = new TestParam("foo").setAllowMultipleValues().setConsumer(consumer);
+        param.addValue("abc");
+        param.addValue("def");
+        param.addValue("ghi");
+
+        Assert.assertEquals(3, list.size());
+        Assert.assertEquals("abc", list.get(0));
+        Assert.assertEquals("def", list.get(1));
+        Assert.assertEquals("ghi", list.get(2));
+    }
+
+    @Test
+    public void biConsumerIsCalledWithParameterName()
+    {
+        final LinkedList<String> list = new LinkedList<>();
+        final BiConsumer<String, String> consumer = (name, value) -> list.add(name);
+        final SimpleDslParam param1 = new TestParam("foo").setAllowMultipleValues().setConsumer(consumer);
+        final SimpleDslParam param2 = new TestParam("bar").setAllowMultipleValues().setConsumer(consumer);
+        param1.addValue("abc");
+        param1.addValue("def");
+        param2.addValue("ghi");
+
+        Assert.assertEquals(3, list.size());
+        Assert.assertEquals("foo", list.get(0));
+        Assert.assertEquals("foo", list.get(1));
+        Assert.assertEquals("bar", list.get(2));
     }
 
     private static class TestParam extends SimpleDslParam
