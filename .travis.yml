@@ -7,5 +7,5 @@ env:
   - secure: AIBi/yDIwnImwl/wN43Qxpi5W9KdyC6dgrWGDW2BVNAssnKXKVUX1LlALcESAipQVdBAuXKNRKGwgUZSs5k5o5S5gAznaVZV2U2U7jJ+ON7+xhjdJ50qGglwUJaRiKqOiFnka7Ms/yo5LsBmhpvGoZxsLkigaK/0JL7eARWtY+U=
   - secure: NYWRJ5gw4x+wR2FiHdRZpu9zChKDK5r82G+xa015wC81Ht2Me+3roYAWZiZwnuBycqFnxzwLaCBRA1ofMW8etranMSoH2LvzIzZHHPA4/R4pbMwGvVIf7ZhuBaTb0TSgOtJmShzyO+T0aJFrOANvhTrBC1spHkhDbeiSy2CzCKI=
 after_success:
-  - echo "<settings><servers><server><id>ossrh</id><username>\${env.CI_DEPLOY_USERNAME}</username><password>\${env.CI_DEPLOY_PASSWORD}</password></server></servers></settings>" > ~/settings.xml
+  - echo "<settings><servers><server><id>sonatype-nexus-snapshots</id><username>\${env.CI_DEPLOY_USERNAME}</username><password>\${env.CI_DEPLOY_PASSWORD}</password></server></servers></settings>" > ~/settings.xml
   - mvn deploy --settings ~/settings.xml
