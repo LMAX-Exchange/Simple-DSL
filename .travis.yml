@@ -8,4 +8,5 @@ env:
   - secure: NYWRJ5gw4x+wR2FiHdRZpu9zChKDK5r82G+xa015wC81Ht2Me+3roYAWZiZwnuBycqFnxzwLaCBRA1ofMW8etranMSoH2LvzIzZHHPA4/R4pbMwGvVIf7ZhuBaTb0TSgOtJmShzyO+T0aJFrOANvhTrBC1spHkhDbeiSy2CzCKI=
 before_install:
   - echo "<settings><servers><server><id>sonatype-nexus-snapshots</id><username>\${env.CI_DEPLOY_USERNAME}</username><password>\${env.CI_DEPLOY_PASSWORD}</password></server></servers></settings>" > ~/settings.xml
-script: "[ ${TRAVIS_PULL_REQUEST} = 'false' ] && mvn clean deploy --settings ~/settings.xml || mvn clean verify"
+script:
+  - "if [ ${TRAVIS_PULL_REQUEST} = 'false' ]; then mvn clean deploy --settings ~/settings.xml; else mvn clean verify; fi"
