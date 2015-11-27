@@ -44,7 +44,7 @@ public class DslParams extends DslValues
             {
                 break;
             }
-            currentPosition = param.getAsRequiredParam().consume(currentPosition, arguments);
+            currentPosition = param.consume(currentPosition, arguments);
         }
 
         while (currentPosition < args.length)

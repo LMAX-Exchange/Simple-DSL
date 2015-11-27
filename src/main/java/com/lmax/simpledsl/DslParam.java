@@ -2,7 +2,11 @@ package com.lmax.simpledsl;
 
 public abstract class DslParam
 {
-    public abstract RequiredParam getAsRequiredParam();
+    /** @deprecated With the addition of covariant return types, this should no longer be necessary. */
+    @Deprecated
+    public RequiredParam getAsRequiredParam() {
+        return null;
+    }
 
     public abstract SimpleDslParam getAsSimpleDslParam();
 
@@ -10,9 +14,9 @@ public abstract class DslParam
 
     public abstract int consume(int currentPosition, NameValuePair... args);
 
-    public final boolean isRequired()
+    public boolean isRequired()
     {
-        return getAsRequiredParam() != null;
+        return false;
     }
 
     public abstract boolean hasValue();

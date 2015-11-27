@@ -28,7 +28,6 @@ public class OptionalParamTest
     {
         final DslParam param = new OptionalParam("foo");
         Assert.assertFalse(param.isRequired());
-        Assert.assertNull(param.getAsRequiredParam());
     }
 
     @Test

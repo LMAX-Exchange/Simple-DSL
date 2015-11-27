@@ -15,7 +15,7 @@
  */
 package com.lmax.simpledsl;
 
-public class RequiredParam extends SimpleDslParam
+public class RequiredParam extends SimpleDslParam<RequiredParam>
 {
     public RequiredParam(final String name)
     {
@@ -32,6 +32,12 @@ public class RequiredParam extends SimpleDslParam
     public boolean isValid()
     {
         return getValues().length != 0;
+    }
+
+    @Override
+    public boolean isRequired()
+    {
+        return true;
     }
 
     @Override
