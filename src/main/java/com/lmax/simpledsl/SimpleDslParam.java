@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public abstract class SimpleDslParam extends DslParam
+public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslParam
 {
     private final List<String> values = new LinkedList<>();
     private static final String DEFAULT_DELIMITER = ",";
@@ -49,39 +49,34 @@ public abstract class SimpleDslParam extends DslParam
         return null;
     }
 
-    public SimpleDslParam setAllowedValues(final String... allowedValues)
+    public P setAllowedValues(final String... allowedValues)
     {
         this.allowedValues = allowedValues;
-        return this;
+        return (P) this;
     }
 
-    public SimpleDslParam setAllowMultipleValues()
+    public P setAllowMultipleValues()
     {
         return setAllowMultipleValues(DEFAULT_DELIMITER);
     }
 
-    public SimpleDslParam setAllowMultipleValues(final String delimiter)
+    public P setAllowMultipleValues(final String delimiter)
     {
         allowMultipleValues = true;
         multipleValueSeparator = delimiter;
-        return this;
+        return (P) this;
     }
 
-    public SimpleDslParam setDefault(final String value)
-    {
-        throw new UnsupportedOperationException("Cannot set default values for this param");
-    }
-
-    public SimpleDslParam setConsumer(Consumer<String> consumer)
+    public P setConsumer(Consumer<String> consumer)
     {
         this.consumer = (name, value) -> consumer.accept(value);
-        return this;
+        return (P) this;
     }
 
-    public SimpleDslParam setConsumer(BiConsumer<String, String> consumer)
+    public P setConsumer(BiConsumer<String, String> consumer)
     {
         this.consumer = consumer;
-        return this;
+        return (P) this;
     }
 
     @Override

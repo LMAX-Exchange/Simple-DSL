@@ -135,17 +135,11 @@ public class SimpleDslParamTest
         Assert.assertEquals("bar", list.get(2));
     }
 
-    private static class TestParam extends SimpleDslParam
+    private static class TestParam extends SimpleDslParam<TestParam>
     {
         public TestParam(final String name)
         {
             super(name);
-        }
-
-        @Override
-        public RequiredParam getAsRequiredParam()
-        {
-            return null;
         }
 
     }

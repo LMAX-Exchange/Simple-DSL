@@ -27,7 +27,6 @@ public class RequiredParamTest
     public void aRequiredParamShouldIdentifyItselfAsSuch()
     {
         final DslParam param = new RequiredParam("foo");
-        Assert.assertSame(param, param.getAsRequiredParam());
         Assert.assertTrue(param.isRequired());
     }
 
@@ -79,7 +78,7 @@ public class RequiredParamTest
     @Test
     public void consumeConsumesMultipleParamsUpToTheFirstParamNamedDifferently()
     {
-        final RequiredParam param = new RequiredParam("foo").setAllowMultipleValues().getAsRequiredParam();
+        final RequiredParam param = new RequiredParam("foo").setAllowMultipleValues();
         final int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1"), new NameValuePair("2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
                                      new NameValuePair("something else = 5"));
         Assert.assertEquals(5, position);
@@ -89,7 +88,7 @@ public class RequiredParamTest
     @Test
     public void consumeCanConsumeMultipleParamsBySplittingValuesByCommaDelimiter()
     {
-        final RequiredParam param = new RequiredParam("foo").setAllowMultipleValues().getAsRequiredParam();
+        final RequiredParam param = new RequiredParam("foo").setAllowMultipleValues();
         final int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1, 2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
                                      new NameValuePair("something else = 5"));
         Assert.assertEquals(4, position);
@@ -99,7 +98,7 @@ public class RequiredParamTest
     @Test
     public void consumeCanConsumeMultipleParamsBySplittingValuesByUserSuppliedDelimiter()
     {
-        final RequiredParam param = new RequiredParam("foo").setAllowMultipleValues("\\|").getAsRequiredParam();
+        final RequiredParam param = new RequiredParam("foo").setAllowMultipleValues("\\|");
         final int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1| 2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
                                      new NameValuePair("something else = 5"));
         Assert.assertEquals(4, position);

@@ -22,12 +22,6 @@ public class RepeatingParamGroup extends DslParam
     }
 
     @Override
-    public RequiredParam getAsRequiredParam()
-    {
-        return null;
-    }
-
-    @Override
     public SimpleDslParam getAsSimpleDslParam()
     {
         return null;
