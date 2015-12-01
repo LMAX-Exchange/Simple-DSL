@@ -121,8 +121,11 @@ public class DslParams extends DslValues
         return new DslParams(args, new RequiredParam(requiredParamName)).value(requiredParamName);
     }
 
-    /**If you have a DSL method that doesn't require any parameters, if you declare it as taking the usual String array and
+    /**
+     * If you have a DSL method that doesn't require any parameters, if you declare it as taking the usual String array and
      * call checkEmpty(), then the -usage trick still works.
+     *
+     * @param args the parameters provided.
      */
     public static void checkEmpty(final String[] args)
     {
