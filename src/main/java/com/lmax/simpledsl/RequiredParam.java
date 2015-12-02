@@ -55,27 +55,6 @@ public class RequiredParam extends SimpleDslParam<RequiredParam>
         return position;
     }
 
-    @Override
-    public RequiredParam setAllowedValues(final String... allowedValues)
-    {
-        super.setAllowedValues(allowedValues);
-        return this;
-    }
-
-    @Override
-    public RequiredParam setAllowMultipleValues()
-    {
-        super.setAllowMultipleValues();
-        return this;
-    }
-
-    @Override
-    public RequiredParam setAllowMultipleValues(final String delimiter)
-    {
-        super.setAllowMultipleValues(delimiter);
-        return this;
-    }
-
     private boolean consumeSingleParam(final NameValuePair[] args, final int position)
     {
         final NameValuePair nameValue = getArg(args, position);
