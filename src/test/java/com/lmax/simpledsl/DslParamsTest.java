@@ -20,8 +20,10 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.function.Consumer;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -34,6 +36,13 @@ public class DslParamsTest
     public void shouldReturnValueAsInt()
     {
         final DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"));
+        assertEquals(1, params.valueAsInt("a"));
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void shouldThrowNumberFormatExceptionWhenValueAsIntCalledForParameterThatIsNotSupplied() throws Exception
+    {
+        final DslParams params = new DslParams(new String[0], new OptionalParam("a"));
         assertEquals(1, params.valueAsInt("a"));
     }
 
@@ -155,6 +164,46 @@ public class DslParamsTest
         final DslParams params = new DslParams(new String[]{"a=1"}, new RequiredParam("a"), new OptionalParam("b"));
 
         assertFalse(params.hasValue("b"));
+    }
+
+    @Test
+    public void shouldReturnTrueFromHasParamIfAnEmptyValueIsSupplied() throws Exception
+    {
+        final DslParams params = new DslParams(new String[]{"a="}, new OptionalParam("a"));
+
+        assertTrue(params.hasValue("a"));
+    }
+
+    @Test
+    public void shouldReturnEmptyOptionalWhenValueIsNotSupplied() throws Exception
+    {
+        final DslParams params = new DslParams(new String[0], new OptionalParam("a"));
+
+        assertEquals(params.valueAsOptional("a"), Optional.empty());
+    }
+
+    @Test
+    public void shouldReturnOptionalWithValueWhenValueIsSupplied() throws Exception
+    {
+        final DslParams params = new DslParams(new String[]{"a=value"}, new OptionalParam("a"));
+
+        assertEquals(params.valueAsOptional("a"), Optional.of("value"));
+    }
+
+    @Test
+    public void shouldReturnEmptyOptionalWhenMultipleParameterValueIsNotSupplied() throws Exception
+    {
+        final DslParams params = new DslParams(new String[0], new OptionalParam("a").setAllowMultipleValues());
+
+        assertEquals(params.valuesAsOptional("a"), Optional.empty());
+    }
+
+    @Test
+    public void shouldReturnOptionalListWhenMultipleParameterValueIsSupplied() throws Exception
+    {
+        final DslParams params = new DslParams(new String[]{"a=value1", "a=value2"}, new OptionalParam("a").setAllowMultipleValues());
+
+        assertEquals(params.valuesAsOptional("a"), Optional.of(asList("value1", "value2")));
     }
 
     @Test(expected = IllegalArgumentException.class)

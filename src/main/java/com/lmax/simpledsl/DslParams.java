@@ -18,6 +18,19 @@ package com.lmax.simpledsl;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The main entry point for defining the DSL language. Create a DslParams instance with the supplied arguments and the supported params.
+ * The supplied values can then be retrieved using {@link DslParams#value(String)} and related methods.
+ *
+ * <pre>{@code
+ *     public void createUser(String... args) {
+ *         DslParams params = new DslParams(args,
+ *                                          new RequiredParam("user"),
+ *                                          new OptionalParam("password"));
+ *         getDriver().createUser(params.value("user"), params.valueAsOptional("password"));
+ *     }
+ * }</pre>
+ */
 public class DslParams extends DslValues
 {
     private static final String USAGE_TOKEN = "-usage";
@@ -25,6 +38,12 @@ public class DslParams extends DslValues
     private final DslParam[] params;
     private final Map<String,DslParam> paramsByName = new HashMap<>();
 
+    /**
+     * Create a new DslParams to define the supported dsl language.
+     *
+     * @param args the arguments supplied by the test.
+     * @param params the supported parameters.
+     */
     public DslParams(final String[] args, final DslParam... params)
     {
         this.params = params;
@@ -96,6 +115,21 @@ public class DslParams extends DslValues
         throw new IllegalArgumentException(name + " was not a parameter");
     }
 
+
+    /**
+     * Retrieve the sets of values supplied for a {@link RepeatingParamGroup} or an empty array if no values were supplied. {@code RepeatingParamGroup} requires that it's first parameter
+     * be a {@link RequiredParam} and the group as a whole is referenced using the name of that parameter. e.g.
+     *
+     * <pre>{@code
+     *   DslParams params = new DslParams(args, new RepeatingParamGroup(new RequiredParam("user"),
+     *                                                                  new OptionalParam("password")));
+     *   RepeatingGroup[] usersToCreate = params.valuesAsGroup("user");
+     * }</pre>
+     *
+     * @param groupName the name of the first required parameter.
+     * @return an array of RepeatingGroup instances, one for each set of values supplied for the parameter.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a RepeatingParamGroup parameter.
+     */
     public RepeatingGroup[] valuesAsGroup(final String groupName)
     {
         final DslParam param = getDslParam(groupName);
@@ -111,11 +145,23 @@ public class DslParams extends DslValues
         return repeatingParamGroup.values();
     }
 
+    /**
+     * Get the supported parameters. Supplied values will have been parsed into the parameters.
+     *
+     * @return the array of {@link DslParam} instances supplied to the constructor.
+     */
     public DslParam[] getParams()
     {
         return params;
     }
 
+    /**
+     * A shorthand way to create a {@code DslParams} instance that accepts a single required parameter and return the value that was supplied for that parameter.
+     *
+     * @param args the arguments supplied by the test.
+     * @param requiredParamName the name of the required parameter.
+     * @return the value supplied for the parameter.
+     */
     public static String getSingleRequiredParamValue(final String[] args, final String requiredParamName)
     {
         return new DslParams(args, new RequiredParam(requiredParamName)).value(requiredParamName);
