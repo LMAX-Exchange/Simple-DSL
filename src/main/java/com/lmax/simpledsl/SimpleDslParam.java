@@ -21,6 +21,11 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+/**
+ * The root type for all simple params.
+ *
+ * @param <P> the actual type of simple parameter.
+ */
 public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslParam
 {
     private final List<String> values = new LinkedList<>();
@@ -32,6 +37,11 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
     private BiConsumer<String, String> consumer;
     private boolean calledConsumer;
 
+    /**
+     * Create the parameter.
+     *
+     * @param name the parameter name.
+     */
     public SimpleDslParam(final String name)
     {
         this.name = name;
@@ -49,17 +59,41 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
         return null;
     }
 
+    /**
+     * Restrict the allowed values for this parameter to the specified set. Specifying a value outside of this set will result in an exception being thrown when parsing the arguments.
+     *
+     * @param allowedValues the allowable values for this parameter.
+     * @return this parameter
+     */
     public P setAllowedValues(final String... allowedValues)
     {
         this.allowedValues = allowedValues;
         return (P) this;
     }
 
+    /**
+     * Allow multiple values to be specified for this parameter, either as separate arguments or using comma (,) as a delimiter.
+     *
+     * The following calls are equivalent:
+     * <pre>{@code
+     * verifyUsersPresent("user: joan", "user: jenny", "user: joanne");
+     * verifyUsersPresent("user: joan, jenny, joanne");
+     * }</pre>
+     *
+     * @see #setAllowMultipleValues(String)
+     * @return this parameter
+     */
     public P setAllowMultipleValues()
     {
         return setAllowMultipleValues(DEFAULT_DELIMITER);
     }
 
+    /**
+     * Allow multiple values to be specified for this parameter, either as separate arguments or using the specified string as a delimiter.
+     *
+     * @see #setAllowMultipleValues()
+     * @return this parameter
+     */
     public P setAllowMultipleValues(final String delimiter)
     {
         allowMultipleValues = true;
@@ -67,12 +101,31 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
         return (P) this;
     }
 
+    /**
+     * Set a consumer which is called for every value supplied to this parameter. If multiple values are allowed, the consumer will be called once for each supplied value.
+     * For an {@link OptionalParam} with a default value set, the consumer will be called with the default value if no other value is supplied.
+     *
+     * @see #setConsumer(BiConsumer)
+     * @param consumer the consumer provide values to.
+     * @return this parameter.
+     */
     public P setConsumer(Consumer<String> consumer)
     {
         this.consumer = (name, value) -> consumer.accept(value);
         return (P) this;
     }
 
+
+    /**
+     * Set a consumer which is called with the name and value for every value supplied to this parameter. If multiple values are allowed, the consumer will be called once for each supplied value.
+     * For an {@link OptionalParam} with a default value set, the consumer will be called with the default value if no other value is supplied.
+     *
+     * <p>This differs from {@link #setConsumer(Consumer)} by supplying the name and value to the consumer. The name is supplied as the first argument and the value as the second.</p>
+     *
+     * @see #setConsumer(Consumer)
+     * @param consumer the consumer provide values to.
+     * @return this parameter.
+     */
     public P setConsumer(BiConsumer<String, String> consumer)
     {
         this.consumer = consumer;
@@ -97,6 +150,11 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
         return null;
     }
 
+    /**
+     * Used when parsing values. Not intended to be part of the public API and will be removed in a future release.
+     *
+     * @param value the value to add to this parameter.
+     */
     public void addValue(final String value)
     {
         if (allowMultipleValues)
@@ -143,6 +201,12 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
         }
     }
 
+    /**
+     * Get the value for this parameter. If multiple values are allowed, use {@link #getValues()} instead.
+     *
+     * @return the value for this parameter or {@code null} if the parameter has no value.
+     * @throws IllegalArgumentException if multiple values are allowed.
+     */
     public String getValue()
     {
         if (allowMultipleValues)
@@ -153,12 +217,17 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
         return strings.length > 0 ? strings[0] : null;
     }
 
+    /**
+     * Retrieve the values supplied for this parameter as an array. Returns an empty array if the parameter is optional and a value has not been supplied.
+     *
+     * @return an array of values supplied for the parameter.
+     */
     public String[] getValues()
     {
         return values.toArray(new String[values.size()]);
     }
 
-    public void completedParsing()
+    void completedParsing()
     {
         if (!calledConsumer && getDefaultValue() != null)
         {

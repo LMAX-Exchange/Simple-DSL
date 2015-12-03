@@ -167,9 +167,18 @@ public class DslParamsTest
     }
 
     @Test
-    public void shouldReturnTrueFromHasParamIfAnEmptyValueIsSupplied() throws Exception
+    public void shouldReturnTrueFromHasValueIfAnEmptyValueIsSupplied() throws Exception
     {
         final DslParams params = new DslParams(new String[]{"a="}, new OptionalParam("a"));
+
+        assertTrue(params.hasValue("a"));
+    }
+
+    @Test
+    public void shouldReturnTrueFromHasValueIfADefaultValueIsUsed() throws Exception
+    {
+
+        final DslParams params = new DslParams(new String[0], new OptionalParam("a").setDefault("value"));
 
         assertTrue(params.hasValue("a"));
     }
