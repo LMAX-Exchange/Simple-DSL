@@ -5,10 +5,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Provides access to the values for a single instance of a {@link RepeatingParamGroup}. Apart from not supporting nested {@code RepeatingParamGroup}s, all the value accessor methods from
+ * {@link DslParams} are available.
+ *
+ * @see RepeatingParamGroup
+ * @see DslParams#valuesAsGroup(String)
+ */
 public class RepeatingGroup extends DslValues
 {
     private final Map<String, List<String>> valuesByName = new HashMap<>();
 
+    /**
+     * Used as part of argument parsing. Not intended to be part of the public API and will be removed in a future release.
+     *
+     * @deprecated Not intended to be part of the public API and will be removed in a future release.
+     * @param name the name of the parameter
+     * @param value the value to add.
+     */
     public void addValue(final String name, final String value)
     {
         List<String> values = getValues(name);

@@ -15,6 +15,11 @@
  */
 package com.lmax.simpledsl;
 
+/**
+ * Thrown when a -usage parameter is supplied.
+ *
+ * @deprecated To be removed in a future release. Use {@link DslParams#getParams()} instead.
+ */
 public class DslParamsUsageException extends RuntimeException
 {
     private final DslParam[] params;
@@ -24,6 +29,11 @@ public class DslParamsUsageException extends RuntimeException
         this.params = params;
     }
 
+    /**
+     * Get the supported parameters.
+     *
+     * @return the supported parameters.
+     */
     public DslParam[] getParams()
     {
         return params;
