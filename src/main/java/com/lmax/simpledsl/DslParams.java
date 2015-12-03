@@ -168,8 +168,8 @@ public class DslParams extends DslValues
     }
 
     /**
-     * If you have a DSL method that doesn't require any parameters, if you declare it as taking the usual String array and
-     * call checkEmpty(), then the -usage trick still works.
+     * Utility method for defining a DSL method that doesn't accept any arguments. This is an alternative to removing the {@code String... args} parameter entirely
+     * when a consistent public API is desired.
      *
      * @param args the parameters provided.
      */
