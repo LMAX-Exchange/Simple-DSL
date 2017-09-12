@@ -92,6 +92,7 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
      * Allow multiple values to be specified for this parameter, either as separate arguments or using the specified string as a delimiter.
      *
      * @see #setAllowMultipleValues()
+     * @param delimiter the delimiter to use to separate values
      * @return this parameter
      */
     public P setAllowMultipleValues(final String delimiter)
