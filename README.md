@@ -11,11 +11,6 @@ dependent on the system under test but the [wiki](https://github.com/LMAX-Exchan
 building DSLs that stand the test of time.
 
 
-### Maintainers
-
- * [Adrian Sutton](https://www.symphonious.net/)
- * [Chris Smith](https://github.com/anotherchrissmith)
-
 ### Example
 
 A simple test case for placing an order on an exchange might look like:
