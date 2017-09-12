@@ -308,6 +308,14 @@ public class DslParamsTest
     }
 
     @Test
+    public void shouldIgnoreNullArgumentsInRepeatingGroups() throws Exception {
+        final DslParams params = new DslParams(new String[]{"a=1", "b=2", null}, new RepeatingParamGroup(new RequiredParam("a"), new RequiredParam("b")));
+        final RepeatingGroup[] group = params.valuesAsGroup("a");
+        assertEquals("1", group[0].value("a"));
+        assertEquals("2", group[0].value("b"));
+    }
+
+    @Test
     public void callingADslMethodWithUsageArgThrowsAnExceptionContainingTheDslParamsForIntrospection()
     {
         final SimpleDslParam[] params = {new RequiredParam("a"), new OptionalParam("b")};

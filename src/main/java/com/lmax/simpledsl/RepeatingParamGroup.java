@@ -101,6 +101,10 @@ public class RepeatingParamGroup extends DslParam
                     break;
                 }
             }
+            else
+            {
+                currentPosition++;
+            }
         }
         for (final SimpleDslParam param : paramsByName.values())
         {
