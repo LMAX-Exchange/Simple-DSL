@@ -46,6 +46,16 @@ public abstract class DslParam
     }
 
     /**
+     * Determine if a value is optional for this parameter.
+     *
+     * @return {@code true} if and only if this param is optional.
+     */
+    public boolean isOptional()
+    {
+        return false;
+    }
+
+    /**
      * Determine a value was supplied for this parameter.
      *
      * @return {@code true} if and only if a value (including a blank value) was supplied for this parameter.

@@ -15,8 +15,10 @@
  */
 package com.lmax.simpledsl;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The main entry point for defining the DSL language. Create a DslParams instance with the supplied arguments and the supported params.
@@ -57,6 +59,19 @@ public class DslParams extends DslValues
         }
 
         int currentPosition = 0;
+
+        final boolean allParamsOptional = Arrays.stream(params).allMatch(DslParam::isOptional);
+        final boolean allArgsPositional = Arrays.stream(arguments).filter(Objects::nonNull)
+                .map(NameValuePair::getName)
+                .allMatch(Objects::isNull);
+        if (allParamsOptional && allArgsPositional && params.length == args.length)
+        {
+            for (final DslParam param : params)
+            {
+                currentPosition = param.consume(currentPosition, arguments);
+            }
+        }
+
         for (final DslParam param : params)
         {
             if (!param.isRequired() || currentPosition >= arguments.length || !matches(arguments[currentPosition], param))

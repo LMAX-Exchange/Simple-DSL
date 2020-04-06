@@ -291,6 +291,13 @@ public class DslParamsTest
     }
 
     @Test
+    public void shouldExtractOptionalParamsFromPositionalArgumentsWhenArgumentCountMatchesParameterCount() {
+        final DslParams params = new DslParams(new String[]{"1", "2"}, new OptionalParam("a"), new OptionalParam("b"));
+        assertEquals("1", params.value("a"));
+        assertEquals("2", params.value("b"));
+    }
+
+    @Test
     public void shouldMatchParamsIgnoringCase() throws Exception
     {
         final DslParams params = new DslParams(new String[]{"a=1", "B=2"}, new RequiredParam("A"), new OptionalParam("b"));
