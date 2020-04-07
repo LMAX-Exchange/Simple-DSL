@@ -136,7 +136,8 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
     @Override
     public int consume(final int currentPosition, final NameValuePair... args)
     {
-        addValue(args[currentPosition].getValue());
+        final NameValuePair arg = args[currentPosition];
+        addValue(null == arg ? null : arg.getValue());
         return currentPosition + 1;
     }
 

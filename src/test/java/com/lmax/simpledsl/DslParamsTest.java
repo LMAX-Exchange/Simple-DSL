@@ -291,10 +291,21 @@ public class DslParamsTest
     }
 
     @Test
-    public void shouldExtractOptionalParamsFromPositionalArgumentsWhenArgumentCountMatchesParameterCount() {
+    public void shouldExtractOptionalParamsFromPositionalArguments() {
         final DslParams params = new DslParams(new String[]{"1", "2"}, new OptionalParam("a"), new OptionalParam("b"));
         assertEquals("1", params.value("a"));
         assertEquals("2", params.value("b"));
+    }
+
+    @Test
+    public void shouldExtractOptionalParamsFromPositionalArgumentsWhenNullArgumentsArePresent() {
+        final DslParams params = new DslParams(new String[]{null, "1", null},
+                new OptionalParam("a"),
+                new OptionalParam("b"),
+                new OptionalParam("c"));
+        assertNull(params.value("a"));
+        assertEquals("1", params.value("b"));
+        assertNull(params.value("c"));
     }
 
     @Test
