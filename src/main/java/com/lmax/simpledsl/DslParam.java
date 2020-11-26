@@ -5,7 +5,11 @@ package com.lmax.simpledsl;
  */
 public abstract class DslParam
 {
-    /** @deprecated With the addition of covariant return types, this should no longer be necessary. */
+    /**
+     * @deprecated With the addition of covariant return types, this should no longer be necessary.
+     *
+     * @return this param as a {@code RequiredParam}.
+     */
     @Deprecated
     public RequiredParam getAsRequiredParam() {
         return null;
