@@ -2,6 +2,8 @@ Simple-DSL
 ==========
 
 [![Build Status](https://travis-ci.org/LMAX-Exchange/Simple-DSL.svg?branch=master)](https://travis-ci.org/LMAX-Exchange/Simple-DSL)
+[![License](https://img.shields.io/github/license/LMAX-Exchange/Simple-DSL)](https://github.com/LMAX-Exchange/Simple-DSL/blob/master/LICENCE.txt)
+
 
 Simple-DSL is a style for writing acceptance tests used at LMAX Exchange that aims to balance human and machine readability. The intention is that developers and non-developers alike can easily read
 and understand an acceptance test, and developer IDEs can understand enough of an acceptance test to support useful, but not necessarily comprehensive searching, refactoring and name completion.
