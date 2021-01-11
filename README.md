@@ -1,7 +1,7 @@
 Simple-DSL
 ==========
 
-![Java CI with Maven](https://github.com/LMAX-Exchange/Simple-DSL/workflows/Java%20CI%20with%20Maven/badge.svg)
+[![Java CI with Maven](https://github.com/LMAX-Exchange/Simple-DSL/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/LMAX-Exchange/Simple-DSL/actions?query=workflow%3A%22Java+CI+with+Maven%22)
 [![License](https://img.shields.io/github/license/LMAX-Exchange/Simple-DSL)](https://github.com/LMAX-Exchange/Simple-DSL/blob/master/LICENCE.txt)
 
 
