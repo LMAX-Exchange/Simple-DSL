@@ -1,7 +1,7 @@
 Simple-DSL
 ==========
 
-[![Build Status](https://travis-ci.org/LMAX-Exchange/Simple-DSL.svg?branch=master)](https://travis-ci.org/LMAX-Exchange/Simple-DSL)
+![Java CI with Maven](https://github.com/LMAX-Exchange/Simple-DSL/workflows/Java%20CI%20with%20Maven/badge.svg)
 [![License](https://img.shields.io/github/license/LMAX-Exchange/Simple-DSL)](https://github.com/LMAX-Exchange/Simple-DSL/blob/master/LICENCE.txt)
 
 
