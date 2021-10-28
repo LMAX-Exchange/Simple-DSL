@@ -56,12 +56,6 @@ public class RequiredParam extends SimpleDslParam<RequiredParam>
     }
 
     @Override
-    public RequiredParam getAsRequiredParam()
-    {
-        return this;
-    }
-
-    @Override
     public boolean isValid()
     {
         return getValues().length != 0;

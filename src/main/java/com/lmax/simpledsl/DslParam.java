@@ -22,16 +22,6 @@ package com.lmax.simpledsl;
 public abstract class DslParam
 {
     /**
-     * @return this param as a {@code RequiredParam}.
-     * @deprecated With the addition of covariant return types, this should no longer be necessary.
-     */
-    @Deprecated
-    public RequiredParam getAsRequiredParam()
-    {
-        return null;
-    }
-
-    /**
      * Return this param as a {@link SimpleDslParam} or {@code null} if the param cannot be viewed as a {@code SimpleDslParam} (e.g. because it's a {@link RepeatingParamGroup}).
      *
      * @return this param as a {@code SimpleDslParam}.
