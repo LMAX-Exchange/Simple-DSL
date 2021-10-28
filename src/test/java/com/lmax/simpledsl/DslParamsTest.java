@@ -672,17 +672,4 @@ public class DslParamsTest
 
         assertEquals("Unexpected argument b=2", exception.getMessage());
     }
-
-    @Test
-    public void shouldThrowAnExceptionContainingTheDslParamsForIntrospectionWhenPassedTheUsageArg()
-    {
-        final String[] args = {"-usage"};
-        final SimpleDslParam<?>[] params = {new RequiredParam("a"), new OptionalParam("b")};
-
-        final DslParamsUsageException exception = assertThrows(
-                DslParamsUsageException.class,
-                () -> new DslParams(args, params));
-
-        assertArrayEquals(params, exception.getParams());
-    }
 }

@@ -35,8 +35,6 @@ import java.util.Objects;
  */
 public class DslParams extends DslValues
 {
-    private static final String USAGE_TOKEN = "-usage";
-
     private final DslParam[] params;
     private final Map<String, DslParam> paramsByName = new HashMap<>();
 
@@ -50,7 +48,6 @@ public class DslParams extends DslValues
     public DslParams(final String[] args, final DslParam... params)
     {
         this.params = params;
-        checkUsage(args, params);
 
         final NameValuePair[] arguments = parseArguments(args);
 
@@ -199,14 +196,6 @@ public class DslParams extends DslValues
     {
         final DslParam param = getDslParam(name);
         return param != null && param.hasValue();
-    }
-
-    private void checkUsage(final String[] args, final DslParam... params)
-    {
-        if (args != null && args.length == 1 && USAGE_TOKEN.equals(args[0]))
-        {
-            throw new DslParamsUsageException(params);
-        }
     }
 
     private void checkAllRequiredParamsSupplied(final DslParam[] params)
