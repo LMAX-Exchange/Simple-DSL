@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lmax.simpledsl;
+package com.lmax.simpledsl.internal;
 
 import org.junit.jupiter.api.Test;
-
-import java.util.LinkedList;
-import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +27,7 @@ public class RequiredParamTest
     public void shouldReportAsRequired()
     {
         final DslParam param = new RequiredParam("foo");
-        assertTrue(param.isRequired());
+        assertTrue(param.getArg().isRequired());
     }
 
     @Test
@@ -107,17 +104,4 @@ public class RequiredParamTest
         assertEquals(4, position);
         assertArrayEquals(new String[]{"1", "2", "3", "4"}, param.getValues());
     }
-
-    @Test
-    public void shouldCallConsumerWhenASingleValueIsProvided()
-    {
-        final LinkedList<String> list = new LinkedList<>();
-        final Consumer<String> consumer = list::add;
-        final SimpleDslParam<?> param = new RequiredParam("foo").setConsumer(consumer);
-        param.addValue("abc");
-
-        assertEquals(1, list.size());
-        assertEquals("abc", list.get(0));
-    }
-
 }

@@ -13,27 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lmax.simpledsl;
+package com.lmax.simpledsl.internal;
 
-import java.util.Arrays;
+import com.lmax.simpledsl.api.DslArg;
+import com.lmax.simpledsl.api.DslParams;
+import com.lmax.simpledsl.api.RepeatingGroup;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Arrays.stream;
+
 /**
- * The main entry point for defining the DSL language. Create a DslParams instance with the supplied arguments and the supported params.
- * The supplied values can then be retrieved using {@link DslParams#value(String)} and related methods.
- *
- * <pre>{@code
- *     public void createUser(String... args) {
- *         DslParams params = new DslParams(args,
- *                                          new RequiredParam("user"),
- *                                          new OptionalParam("password"));
- *         getDriver().createUser(params.value("user"), params.valueAsOptional("password"));
- *     }
- * }</pre>
+ * The internal implementation of {@link DslParams}.
  */
-public class DslParams extends DslValues
+public final class DslParamsImpl implements DslParams
 {
     private final DslParam[] params;
     private final Map<String, DslParam> paramsByName = new HashMap<>();
@@ -45,7 +40,14 @@ public class DslParams extends DslValues
      * @param params the supported parameters.
      * @throws IllegalArgumentException if an invalid parameter is specified
      */
-    public DslParams(final String[] args, final DslParam... params)
+    public DslParamsImpl(final String[] args, final DslArg... params)
+    {
+        this(args, stream(params)
+                .map(arg -> arg.fold(RequiredParam::new, OptionalParam::new, RepeatingParamGroup::new))
+                .toArray(DslParam[]::new));
+    }
+
+    DslParamsImpl(final String[] args, final DslParam... params)
     {
         this.params = params;
 
@@ -53,13 +55,13 @@ public class DslParams extends DslValues
 
         for (final DslParam param : params)
         {
-            paramsByName.put(param.getName().toLowerCase(), param);
+            paramsByName.put(param.getArg().getName().toLowerCase(), param);
         }
 
         int currentPosition = 0;
 
-        final boolean allParamsOptional = Arrays.stream(params).allMatch(DslParam::isOptional);
-        final boolean allArgsPositional = Arrays.stream(arguments).filter(Objects::nonNull)
+        final boolean allParamsOptional = stream(params).map(DslParam::getArg).allMatch(DslArg::isOptional);
+        final boolean allArgsPositional = stream(arguments).filter(Objects::nonNull)
                 .map(NameValuePair::getName)
                 .allMatch(Objects::isNull);
         if (allParamsOptional && allArgsPositional && params.length == args.length)
@@ -72,7 +74,7 @@ public class DslParams extends DslValues
 
         for (final DslParam param : params)
         {
-            if (!param.isRequired() || currentPosition >= arguments.length || !matches(arguments[currentPosition], param))
+            if (!param.getArg().isRequired() || currentPosition >= arguments.length || !matches(arguments[currentPosition], param))
             {
                 break;
             }
@@ -98,12 +100,11 @@ public class DslParams extends DslValues
         }
 
         checkAllRequiredParamsSupplied(params);
-        completedParsingArguments();
     }
 
     private boolean matches(final NameValuePair argument, final DslParam param)
     {
-        return argument.getName() == null || param.getName().equalsIgnoreCase(argument.getName());
+        return argument.getName() == null || param.getArg().getName().equalsIgnoreCase(argument.getName());
     }
 
     @Override
@@ -128,21 +129,7 @@ public class DslParams extends DslValues
         throw new IllegalArgumentException(name + " was not a parameter");
     }
 
-
-    /**
-     * Retrieve the sets of values supplied for a {@link RepeatingParamGroup} or an empty array if no values were supplied. {@code RepeatingParamGroup} requires that it's first parameter
-     * be a {@link RequiredParam} and the group as a whole is referenced using the name of that parameter. e.g.
-     *
-     * <pre>{@code
-     *   DslParams params = new DslParams(args, new RepeatingParamGroup(new RequiredParam("user"),
-     *                                                                  new OptionalParam("password")));
-     *   RepeatingGroup[] usersToCreate = params.valuesAsGroup("user");
-     * }</pre>
-     *
-     * @param groupName the name of the first required parameter.
-     * @return an array of RepeatingGroup instances, one for each set of values supplied for the parameter.
-     * @throws IllegalArgumentException if {@code name} does not match the name of a RepeatingParamGroup parameter.
-     */
+    @Override
     public RepeatingGroup[] valuesAsGroup(final String groupName)
     {
         final DslParam param = getDslParam(groupName);
@@ -168,29 +155,6 @@ public class DslParams extends DslValues
         return params;
     }
 
-    /**
-     * A shorthand way to create a {@code DslParams} instance that accepts a single required parameter and return the value that was supplied for that parameter.
-     *
-     * @param args              the arguments supplied by the test.
-     * @param requiredParamName the name of the required parameter.
-     * @return the value supplied for the parameter.
-     */
-    public static String getSingleRequiredParamValue(final String[] args, final String requiredParamName)
-    {
-        return new DslParams(args, new RequiredParam(requiredParamName)).value(requiredParamName);
-    }
-
-    /**
-     * Utility method for defining a DSL method that doesn't accept any arguments. This is an alternative to removing the {@code String... args} parameter entirely
-     * when a consistent public API is desired.
-     *
-     * @param args the parameters provided.
-     */
-    public static void checkEmpty(final String[] args)
-    {
-        new DslParams(args);
-    }
-
     @Override
     public boolean hasValue(final String name)
     {
@@ -204,7 +168,7 @@ public class DslParams extends DslValues
         {
             if (!param.isValid())
             {
-                throw new IllegalArgumentException("Missing value for parameter: " + param.getName());
+                throw new IllegalArgumentException("Missing value for parameter: " + param.getArg().getName());
             }
         }
     }
@@ -217,18 +181,6 @@ public class DslParams extends DslValues
             arguments[i] = args[i] != null ? new NameValuePair(args[i]) : null;
         }
         return arguments;
-    }
-
-    private void completedParsingArguments()
-    {
-        for (final DslParam param : params)
-        {
-            final SimpleDslParam simpleDslParam = param.getAsSimpleDslParam();
-            if (simpleDslParam != null)
-            {
-                simpleDslParam.completedParsing();
-            }
-        }
     }
 
     private DslParam getDslParam(final String name)
