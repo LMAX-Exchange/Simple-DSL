@@ -77,7 +77,8 @@ public class OptionalParam extends SimpleDslParam<OptionalParam>
     }
 
     @Override
-    public boolean isOptional() {
+    public boolean isOptional()
+    {
         return true;
     }
 }

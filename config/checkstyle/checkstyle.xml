@@ -170,17 +170,32 @@
 
         <module name="FinalParameters"/>
 
-        <module name="JavadocParagraph"/>
+        <module name="AtclauseOrder"/>
+        <module name="InvalidJavadocPosition"/>
+        <module name="JavadocBlockTagLocation"/>
+        <module name="JavadocContentLocation"/>
         <module name="SingleLineJavadoc"/>
         <module name="JavadocMethod">
-            <property name="accessModifiers" value="public"/>
+            <property name="accessModifiers" value="public, protected"/>
+            <property name="validateThrows" value="true"/>
         </module>
+        <module name="JavadocMissingLeadingAsterisk"/>
+        <module name="JavadocMissingWhitespaceAfterAsterisk"/>
+        <module name="JavadocStyle" />
+        <module name="JavadocTagContinuationIndentation" />
         <module name="JavadocType">
             <property name="scope" value="public"/>
         </module>
         <module name="JavadocVariable">
             <property name="scope" value="public"/>
         </module>
+        <module name="MissingJavadocMethod">
+            <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF" />
+        </module>
+        <module name="MissingJavadocType" />
+        <module name="NonEmptyAtclauseDescription" />
+        <module name="RequireEmptyLineBeforeBlockTagGroup" />
+<!--        <module name="SummaryJavadoc" />-->
 
         <module name="IllegalInstantiation"/>
         <module name="MagicNumber"/>

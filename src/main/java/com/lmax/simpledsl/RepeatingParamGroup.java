@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /**
  * Define a group of parameters that can be repeated 0 or more times. The first parameter in the group must be a {@link RequiredParam} and is used to identify the start
  * of the group in arguments and when retrieving the groups from {@link DslParams#valuesAsGroup(String)}. Other parameters may follow the first parameter in any order.
@@ -37,7 +38,7 @@ public class RepeatingParamGroup extends DslParam
      * Create a new {@code RepeatingParamGroup}.
      *
      * @param firstParam the parameter that marks the start of the group.
-     * @param params the other parameters in the group.
+     * @param params     the other parameters in the group.
      */
     public RepeatingParamGroup(final RequiredParam firstParam, final SimpleDslParam... params)
     {
@@ -77,7 +78,8 @@ public class RepeatingParamGroup extends DslParam
      * @deprecated This is not intended to be part of the public API and will be removed in a future release.
      */
     @Override
-    public int consume(final int startingPosition, final NameValuePair... arguments)    {
+    public int consume(final int startingPosition, final NameValuePair... arguments)
+    {
         final RepeatingGroup group = new RepeatingGroup();
         int currentPosition = startingPosition;
         while (currentPosition < arguments.length)

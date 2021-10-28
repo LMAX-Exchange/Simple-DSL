@@ -231,9 +231,9 @@ public class DslParamsTest
     public void youCanExtractMultipleRequiredParamsWhenAllParamsAreNamed()
     {
         final DslParams params = new DslParams(new String[]{"a=1", "b=2", "b=3", "c=4"},
-                                         new RequiredParam("a"),
-                                         new RequiredParam("b").setAllowMultipleValues(),
-                                         new RequiredParam("c"));
+                new RequiredParam("a"),
+                new RequiredParam("b").setAllowMultipleValues(),
+                new RequiredParam("c"));
 
         assertEquals("1", params.value("a"));
         assertArrayEquals(new String[]{"2", "3"}, params.values("b"));
@@ -244,9 +244,9 @@ public class DslParamsTest
     public void youCanExtractMultipleRequiredParamsWhenSubsequentRequiredParamsAreNotNamed()
     {
         final DslParams params = new DslParams(new String[]{"a=1", "b=2", "3", "c=4"},
-                                         new RequiredParam("a"),
-                                         new RequiredParam("b").setAllowMultipleValues(),
-                                         new RequiredParam("c"));
+                new RequiredParam("a"),
+                new RequiredParam("b").setAllowMultipleValues(),
+                new RequiredParam("c"));
 
         assertEquals("1", params.value("a"));
         assertArrayEquals(new String[]{"2", "3"}, params.values("b"));
@@ -271,10 +271,10 @@ public class DslParamsTest
     public void youCanExtractMultipleRequiredParamsAndMultipleOptionalParamsWithOptionalParamsInRandomOrder()
     {
         final DslParams params = new DslParams(new String[]{"a=1", "b=2", "b=3", "c=4", "d=5", "c=6"},
-                                         new RequiredParam("a"),
-                                         new RequiredParam("b").setAllowMultipleValues(),
-                                         new OptionalParam("c").setAllowMultipleValues(),
-                                         new OptionalParam("d"));
+                new RequiredParam("a"),
+                new RequiredParam("b").setAllowMultipleValues(),
+                new OptionalParam("c").setAllowMultipleValues(),
+                new OptionalParam("d"));
 
         assertEquals("1", params.value("a"));
         assertArrayEquals(new String[]{"2", "3"}, params.values("b"));
@@ -291,14 +291,16 @@ public class DslParamsTest
     }
 
     @Test
-    public void shouldExtractOptionalParamsFromPositionalArguments() {
+    public void shouldExtractOptionalParamsFromPositionalArguments()
+    {
         final DslParams params = new DslParams(new String[]{"1", "2"}, new OptionalParam("a"), new OptionalParam("b"));
         assertEquals("1", params.value("a"));
         assertEquals("2", params.value("b"));
     }
 
     @Test
-    public void shouldExtractOptionalParamsFromPositionalArgumentsWhenNullArgumentsArePresent() {
+    public void shouldExtractOptionalParamsFromPositionalArgumentsWhenNullArgumentsArePresent()
+    {
         final DslParams params = new DslParams(new String[]{null, "1", null},
                 new OptionalParam("a"),
                 new OptionalParam("b"),
@@ -319,14 +321,16 @@ public class DslParamsTest
     }
 
     @Test
-    public void shouldIgnoreNullArgumentsAmongstOptionalParameters() throws Exception {
+    public void shouldIgnoreNullArgumentsAmongstOptionalParameters() throws Exception
+    {
         final DslParams params = new DslParams(new String[]{null, "a=1", null, "b=2", null}, new OptionalParam("a"), new OptionalParam("b"));
         assertEquals("1", params.value("a"));
         assertEquals("2", params.value("b"));
     }
 
     @Test
-    public void shouldIgnoreNullArgumentsInRepeatingGroups() throws Exception {
+    public void shouldIgnoreNullArgumentsInRepeatingGroups() throws Exception
+    {
         final DslParams params = new DslParams(new String[]{"a=1", "b=2", null}, new RepeatingParamGroup(new RequiredParam("a"), new RequiredParam("b")));
         final RepeatingGroup[] group = params.valuesAsGroup("a");
         assertEquals("1", group[0].value("a"));
@@ -352,8 +356,8 @@ public class DslParamsTest
     public void shouldBeAbleToRetrieveGroupsOfParams() throws Exception
     {
         final DslParams params = new DslParams(new String[]{"a: value", "group: Joe", "value: 1", "group: Jenny", "value: 2"},
-                                         new RequiredParam("a"),
-                                         new RepeatingParamGroup(new RequiredParam("group"), new RequiredParam("value")));
+                new RequiredParam("a"),
+                new RepeatingParamGroup(new RequiredParam("group"), new RequiredParam("value")));
 
         assertEquals("value", params.value("a"));
         final RepeatingGroup[] groups = params.valuesAsGroup("group");
@@ -368,16 +372,16 @@ public class DslParamsTest
     public void shouldRaiseErrorIfRequiredParameterMissingFromGroup() throws Exception
     {
         new DslParams(new String[]{"a: value", "group: Joe", "group: Jenny", "value: 2"},
-                                         new RequiredParam("a"),
-                                         new RepeatingParamGroup(new RequiredParam("group"), new RequiredParam("value")));
+                new RequiredParam("a"),
+                new RepeatingParamGroup(new RequiredParam("group"), new RequiredParam("value")));
     }
 
     @Test
     public void shouldBeAbleToSpecifyMultipleValuesForParamInGroup() throws Exception
     {
         final DslParams params = new DslParams(new String[]{"a: value", "group: Joe", "group: Jenny", "value: 1", "value: 2"},
-                                         new RequiredParam("a"),
-                                         new RepeatingParamGroup(new RequiredParam("group"), new OptionalParam("value").setAllowMultipleValues()));
+                new RequiredParam("a"),
+                new RepeatingParamGroup(new RequiredParam("group"), new OptionalParam("value").setAllowMultipleValues()));
 
         assertEquals("value", params.value("a"));
         final RepeatingGroup[] groups = params.valuesAsGroup("group");
@@ -394,12 +398,12 @@ public class DslParamsTest
     public void shouldBeAbleToRetrieveGroupsOfParamsWhenSomeOptionalValuesAreOmitted() throws Exception
     {
         final DslParams params = new DslParams(new String[]{"a: value",
-                                                      "group: Joe", "value: 1",
-                                                      "group: Jenny", "optional: X", "value: 2"},
-                                         new RequiredParam("a"),
-                                         new RepeatingParamGroup(new RequiredParam("group"),
-                                                                 new OptionalParam("optional"),
-                                                                 new OptionalParam("value")));
+                "group: Joe", "value: 1",
+                "group: Jenny", "optional: X", "value: 2"},
+                new RequiredParam("a"),
+                new RepeatingParamGroup(new RequiredParam("group"),
+                        new OptionalParam("optional"),
+                        new OptionalParam("value")));
 
         assertEquals("value", params.value("a"));
         final RepeatingGroup[] groups = params.valuesAsGroup("group");
@@ -417,21 +421,21 @@ public class DslParamsTest
     public void shouldEnforceAllowedValuesInRepeatingGroups() throws Exception
     {
         new DslParams(new String[]{"a: value", "group: Joe", "value: 1"},
-                      new RequiredParam("a"),
-                      new RepeatingParamGroup(new RequiredParam("group"),
-                                              new RequiredParam("value").setAllowedValues("A", "B")));
+                new RequiredParam("a"),
+                new RepeatingParamGroup(new RequiredParam("group"),
+                        new RequiredParam("value").setAllowedValues("A", "B")));
     }
 
     @Test
     public void shouldUseDefaultValuesForOptionalParametersInRepeatingGroups() throws Exception
     {
         final DslParams params = new DslParams(new String[]{"a: value",
-                                                      "group: Joe", "value: 1",
-                                                      "group: Jenny", "optional: X", "value: 2"},
-                                         new RequiredParam("a"),
-                                         new RepeatingParamGroup(new RequiredParam("group"),
-                                                                 new OptionalParam("optional").setDefault("default"),
-                                                                 new OptionalParam("value")));
+                "group: Joe", "value: 1",
+                "group: Jenny", "optional: X", "value: 2"},
+                new RequiredParam("a"),
+                new RepeatingParamGroup(new RequiredParam("group"),
+                        new OptionalParam("optional").setDefault("default"),
+                        new OptionalParam("value")));
 
         assertEquals("value", params.value("a"));
         final RepeatingGroup[] groups = params.valuesAsGroup("group");

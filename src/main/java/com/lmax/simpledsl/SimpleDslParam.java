@@ -73,15 +73,15 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
 
     /**
      * Allow multiple values to be specified for this parameter, either as separate arguments or using comma (,) as a delimiter.
-     *
+     * <p>
      * The following calls are equivalent:
      * <pre>{@code
      * verifyUsersPresent("user: joan", "user: jenny", "user: joanne");
      * verifyUsersPresent("user: joan, jenny, joanne");
      * }</pre>
      *
-     * @see #setAllowMultipleValues(String)
      * @return this parameter
+     * @see #setAllowMultipleValues(String)
      */
     public P setAllowMultipleValues()
     {
@@ -91,9 +91,9 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
     /**
      * Allow multiple values to be specified for this parameter, either as separate arguments or using the specified string as a delimiter.
      *
-     * @see #setAllowMultipleValues()
      * @param delimiter the delimiter to use to separate values
      * @return this parameter
+     * @see #setAllowMultipleValues()
      */
     public P setAllowMultipleValues(final String delimiter)
     {
@@ -106,11 +106,11 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
      * Set a consumer which is called for every value supplied to this parameter. If multiple values are allowed, the consumer will be called once for each supplied value.
      * For an {@link OptionalParam} with a default value set, the consumer will be called with the default value if no other value is supplied.
      *
-     * @see #setConsumer(BiConsumer)
      * @param consumer the consumer provide values to.
      * @return this parameter.
+     * @see #setConsumer(BiConsumer)
      */
-    public P setConsumer(Consumer<String> consumer)
+    public P setConsumer(final Consumer<String> consumer)
     {
         this.consumer = (name, value) -> consumer.accept(value);
         return (P) this;
@@ -120,14 +120,14 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
     /**
      * Set a consumer which is called with the name and value for every value supplied to this parameter. If multiple values are allowed, the consumer will be called once for each supplied value.
      * For an {@link OptionalParam} with a default value set, the consumer will be called with the default value if no other value is supplied.
+     * <p>
+     * This differs from {@link #setConsumer(Consumer)} by supplying the name and value to the consumer. The name is supplied as the first argument and the value as the second.
      *
-     * <p>This differs from {@link #setConsumer(Consumer)} by supplying the name and value to the consumer. The name is supplied as the first argument and the value as the second.</p>
-     *
-     * @see #setConsumer(Consumer)
      * @param consumer the consumer provide values to.
      * @return this parameter.
+     * @see #setConsumer(Consumer)
      */
-    public P setConsumer(BiConsumer<String, String> consumer)
+    public P setConsumer(final BiConsumer<String, String> consumer)
     {
         this.consumer = consumer;
         return (P) this;
@@ -147,6 +147,11 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
         return allowMultipleValues ? getValues().length > 0 : getValue() != null;
     }
 
+    /**
+     * Get the default value for this parameter.
+     *
+     * @return the default value.
+     */
     public String getDefaultValue()
     {
         return null;
@@ -162,7 +167,8 @@ public abstract class SimpleDslParam<P extends SimpleDslParam<P>> extends DslPar
         if (allowMultipleValues)
         {
             final String[] values = value.split(multipleValueSeparator);
-            for (final String singleValue : values) {
+            for (final String singleValue : values)
+            {
                 addSingleValue(singleValue.trim());
             }
         }

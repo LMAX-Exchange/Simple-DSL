@@ -19,9 +19,9 @@ public class RepeatingGroup extends DslValues
     /**
      * Used as part of argument parsing. Not intended to be part of the public API and will be removed in a future release.
      *
-     * @deprecated Not intended to be part of the public API and will be removed in a future release.
-     * @param name the name of the parameter
+     * @param name  the name of the parameter
      * @param value the value to add.
+     * @deprecated Not intended to be part of the public API and will be removed in a future release.
      */
     public void addValue(final String name, final String value)
     {

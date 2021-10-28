@@ -80,7 +80,7 @@ public class RequiredParamTest
     {
         final RequiredParam param = new RequiredParam("foo").setAllowMultipleValues();
         final int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1"), new NameValuePair("2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
-                                     new NameValuePair("something else = 5"));
+                new NameValuePair("something else = 5"));
         Assert.assertEquals(5, position);
         Assert.assertArrayEquals(new String[]{"1", "2", "3", "4"}, param.getValues());
     }
@@ -90,7 +90,7 @@ public class RequiredParamTest
     {
         final RequiredParam param = new RequiredParam("foo").setAllowMultipleValues();
         final int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1, 2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
-                                     new NameValuePair("something else = 5"));
+                new NameValuePair("something else = 5"));
         Assert.assertEquals(4, position);
         Assert.assertArrayEquals(new String[]{"1", "2", "3", "4"}, param.getValues());
     }
@@ -100,7 +100,7 @@ public class RequiredParamTest
     {
         final RequiredParam param = new RequiredParam("foo").setAllowMultipleValues("\\|");
         final int position = param.consume(1, new NameValuePair("first param"), new NameValuePair("foo = 1| 2"), new NameValuePair("foo = 3"), new NameValuePair("4"),
-                                     new NameValuePair("something else = 5"));
+                new NameValuePair("something else = 5"));
         Assert.assertEquals(4, position);
         Assert.assertArrayEquals(new String[]{"1", "2", "3", "4"}, param.getValues());
     }

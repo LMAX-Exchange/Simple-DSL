@@ -38,13 +38,14 @@ public class DslParams extends DslValues
     private static final String USAGE_TOKEN = "-usage";
 
     private final DslParam[] params;
-    private final Map<String,DslParam> paramsByName = new HashMap<>();
+    private final Map<String, DslParam> paramsByName = new HashMap<>();
 
     /**
      * Create a new DslParams to define the supported dsl language.
      *
-     * @param args the arguments supplied by the test.
+     * @param args   the arguments supplied by the test.
      * @param params the supported parameters.
+     * @throws IllegalArgumentException if an invalid parameter is specified
      */
     public DslParams(final String[] args, final DslParam... params)
     {
@@ -173,7 +174,7 @@ public class DslParams extends DslValues
     /**
      * A shorthand way to create a {@code DslParams} instance that accepts a single required parameter and return the value that was supplied for that parameter.
      *
-     * @param args the arguments supplied by the test.
+     * @param args              the arguments supplied by the test.
      * @param requiredParamName the name of the required parameter.
      * @return the value supplied for the parameter.
      */

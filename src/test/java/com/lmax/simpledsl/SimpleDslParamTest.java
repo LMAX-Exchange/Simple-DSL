@@ -137,7 +137,7 @@ public class SimpleDslParamTest
 
     private static class TestParam extends SimpleDslParam<TestParam>
     {
-        public TestParam(final String name)
+        TestParam(final String name)
         {
             super(name);
         }
