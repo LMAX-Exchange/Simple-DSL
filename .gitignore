@@ -1,8 +1,9 @@
-/.idea/workspace.xml
-/.idea/copyright/profiles_settings.xml
-/.idea/uiDesigner.xml
-/simple-dsl.ipr
-/simple-dsl.iml
-/simple-dsl.iws
-/target
-/build
+.gradle/
+.idea/shelf/
+.idea/.name
+.idea/*.xml
+*.ipr
+*.iml
+*.iws
+target/
+build/
