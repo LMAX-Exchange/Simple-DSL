@@ -1,7 +1,6 @@
 .gradle/
-.idea/shelf/
-.idea/.name
-.idea/*.xml
+.idea/*
+!.idea/copyright
 *.ipr
 *.iml
 *.iws
