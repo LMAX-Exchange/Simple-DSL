@@ -1,3 +1,19 @@
+/*
+ * Copyright 2011 LMAX Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.lmax.simpledsl;
 
 
@@ -86,7 +102,7 @@ public abstract class DslValues
      * @param name the name of the parameter.
      * @return the value supplied for that parameter.
      * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
-     * @throws NumberFormatException if the supplied value can't be parsed as an {@code int} (including because it wasn't supplied).
+     * @throws NumberFormatException    if the supplied value can't be parsed as an {@code int} (including because it wasn't supplied).
      */
     public int valueAsInt(final String name)
     {
@@ -99,7 +115,7 @@ public abstract class DslValues
      * @param name the name of the parameter.
      * @return the value supplied for that parameter.
      * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
-     * @throws NumberFormatException if the supplied value can't be parsed as a {@code long} (including because it wasn't supplied).
+     * @throws NumberFormatException    if the supplied value can't be parsed as a {@code long} (including because it wasn't supplied).
      */
     public long valueAsLong(final String name)
     {
@@ -124,7 +140,7 @@ public abstract class DslValues
      * @param name the name of the parameter.
      * @return the value supplied for that parameter.
      * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
-     * @throws NumberFormatException if the supplied value can't be parsed as a {@code BigDecimal}
+     * @throws NumberFormatException    if the supplied value can't be parsed as a {@code BigDecimal}
      */
     public BigDecimal valueAsBigDecimal(final String name)
     {
@@ -139,7 +155,7 @@ public abstract class DslValues
      * @param name the name of the parameter.
      * @return the value supplied for that parameter.
      * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
-     * @throws NumberFormatException if the supplied value can't be parsed as a {@code double}
+     * @throws NumberFormatException    if the supplied value can't be parsed as a {@code double}
      */
     public double valueAsDouble(final String name)
     {
@@ -149,7 +165,7 @@ public abstract class DslValues
     /**
      * Retrieve the value supplied for a parameter formatted as a parameter. For example, if the parameter {@literal user} was given the value {@literal jenny},
      * then {@code valueAsParam("user")} would return {@code user: jenny}.
-     *
+     * <p>
      * This is useful when reusing DSL methods to build higher level functions. e.g.
      *
      * <pre>{@code
@@ -161,7 +177,6 @@ public abstract class DslValues
      *     login(params.valueAsParam("user"), "password: password");
      *   }
      * }</pre>
-     *
      *
      * @param name the name of the parameter.
      * @return the value supplied for that parameter, formatted as a parameter ready to pass on to another method that uses Simple-DSL.
@@ -179,7 +194,7 @@ public abstract class DslValues
      * @param name the name of the parameter.
      * @return an array of values supplied for the parameter.
      * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
-     * @throws NumberFormatException if any of the supplied values can not be parsed as an {@code int}.
+     * @throws NumberFormatException    if any of the supplied values can not be parsed as an {@code int}.
      */
     public int[] valuesAsInts(final String name)
     {
@@ -198,7 +213,7 @@ public abstract class DslValues
      * @param name the name of the parameter.
      * @return an array of values supplied for the parameter.
      * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
-     * @throws NumberFormatException if any of the supplied values can not be parsed as an {@code long}.
+     * @throws NumberFormatException    if any of the supplied values can not be parsed as an {@code long}.
      */
     public long[] valuesAsLongs(final String name)
     {
@@ -217,7 +232,7 @@ public abstract class DslValues
      * @param name the name of the parameter.
      * @return an array of values supplied for the parameter.
      * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
-     * @throws NumberFormatException if any of the supplied values can not be parsed as an {@code BigDecimal}.
+     * @throws NumberFormatException    if any of the supplied values can not be parsed as an {@code BigDecimal}.
      */
     public BigDecimal[] valuesAsBigDecimals(final String name)
     {
@@ -236,7 +251,7 @@ public abstract class DslValues
      * @param name the name of the parameter.
      * @return an array of values supplied for the parameter.
      * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
-     * @throws NumberFormatException if any of the supplied values can not be parsed as an {@code double}.
+     * @throws NumberFormatException    if any of the supplied values can not be parsed as an {@code double}.
      */
     public double[] valuesAsDoubles(final String name)
     {

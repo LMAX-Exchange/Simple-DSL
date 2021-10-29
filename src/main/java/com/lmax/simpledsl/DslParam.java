@@ -1,3 +1,19 @@
+/*
+ * Copyright 2011 LMAX Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.lmax.simpledsl;
 
 /**
@@ -6,12 +22,12 @@ package com.lmax.simpledsl;
 public abstract class DslParam
 {
     /**
-     * @deprecated With the addition of covariant return types, this should no longer be necessary.
-     *
      * @return this param as a {@code RequiredParam}.
+     * @deprecated With the addition of covariant return types, this should no longer be necessary.
      */
     @Deprecated
-    public RequiredParam getAsRequiredParam() {
+    public RequiredParam getAsRequiredParam()
+    {
         return null;
     }
 
@@ -32,10 +48,10 @@ public abstract class DslParam
     /**
      * Used as part of parsing the arguments.
      *
-     * @deprecated This is not intended to be part of the public API and will be removed in a future release.
      * @param currentPosition the current argument position in the parse.
-     * @param args the arguments to be consumed.
+     * @param args            the arguments to be consumed.
      * @return the new argument position.
+     * @deprecated This is not intended to be part of the public API and will be removed in a future release.
      */
     public abstract int consume(int currentPosition, NameValuePair... args);
 
@@ -76,8 +92,8 @@ public abstract class DslParam
     /**
      * Used as part of parsing the arguments.
      *
-     * @deprecated This is not intended to be part of the public API and will be removed in a future release.
      * @return {@code true} if and only if the value is valid.
+     * @deprecated This is not intended to be part of the public API and will be removed in a future release.
      */
     public boolean isValid()
     {
