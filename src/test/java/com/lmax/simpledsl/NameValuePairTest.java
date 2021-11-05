@@ -15,56 +15,58 @@
  */
 package com.lmax.simpledsl;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NameValuePairTest
 {
     @Test
-    public void testSplittingNameAndValueWithEquals()
+    public void shouldSplitNameAndValueWithEquals()
     {
         final NameValuePair pair = new NameValuePair("a=1");
-        Assert.assertEquals("a", pair.getName());
-        Assert.assertEquals("1", pair.getValue());
+        assertEquals("a", pair.getName());
+        assertEquals("1", pair.getValue());
     }
 
     @Test
-    public void testSplittingNameAndValueWithColon()
+    public void shouldSplitNameAndValueWithColon()
     {
         final NameValuePair pair = new NameValuePair("a:1");
-        Assert.assertEquals("a", pair.getName());
-        Assert.assertEquals("1", pair.getValue());
+        assertEquals("a", pair.getName());
+        assertEquals("1", pair.getValue());
     }
 
     @Test
-    public void testTrimmingWhitespace()
+    public void shouldTrimWhitespace()
     {
         final NameValuePair pair = new NameValuePair(" a = 1 ");
-        Assert.assertEquals("a", pair.getName());
-        Assert.assertEquals("1", pair.getValue());
+        assertEquals("a", pair.getName());
+        assertEquals("1", pair.getValue());
     }
 
     @Test
-    public void testMultipleSplitTokensArePreservedInTheValue()
+    public void shouldPreserveValueIfMultipleSplitTokensArePresent()
     {
         final NameValuePair pair = new NameValuePair("message: ERROR: Something went wrong!");
-        Assert.assertEquals("message", pair.getName());
-        Assert.assertEquals("ERROR: Something went wrong!", pair.getValue());
+        assertEquals("message", pair.getName());
+        assertEquals("ERROR: Something went wrong!", pair.getValue());
     }
 
     @Test
-    public void testUnnamedPairSetsTheNameToNullAndAssignsEverythingToTheValue()
+    public void shouldSetTheNameToNullAndAssignsEverythingToTheValueInAnUnnamedPair()
     {
         final NameValuePair pair = new NameValuePair("value without a name");
-        Assert.assertEquals(null, pair.getName());
-        Assert.assertEquals("value without a name", pair.getValue());
+        assertNull(pair.getName());
+        assertEquals("value without a name", pair.getValue());
     }
 
     @Test
-    public void testEmptyStringIsUsedForAnEmptyValueRatherThanNull()
+    public void shouldUseAnEmptyStringWhenNoValueIsProvided()
     {
         final NameValuePair pair = new NameValuePair("name:");
-        Assert.assertEquals("name", pair.getName());
-        Assert.assertEquals("", pair.getValue());
+        assertEquals("name", pair.getName());
+        assertEquals("", pair.getValue());
     }
 }

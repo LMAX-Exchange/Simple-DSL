@@ -15,79 +15,83 @@
  */
 package com.lmax.simpledsl;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 import java.util.function.Consumer;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 public class OptionalParamTest
 {
     @Test
-    public void anOptionalParamShouldIdentifyItselfAsSuch()
+    public void shouldNotReportAsRequired()
     {
         final DslParam param = new OptionalParam("foo");
-        Assert.assertFalse(param.isRequired());
+        assertFalse(param.isRequired());
     }
 
     @Test
-    public void settingADefaultValueShouldNotAffectTheReturnedValueIfTheParameterIsSupplied()
+    public void shouldReturnNullIfNoValueIsProvidedAndNoDefaultValueIsSet()
     {
-        final SimpleDslParam param = new OptionalParam("foo").setDefault("def");
+        final SimpleDslParam<?> param = new OptionalParam("foo");
+        assertNull(param.getValue());
+        assertArrayEquals(new String[0], param.getValues());
+    }
+
+    @Test
+    public void shouldUseTheDefaultValueIfNoValueProvided()
+    {
+        final SimpleDslParam<?> param = new OptionalParam("foo").setDefault("def");
+        assertEquals("def", param.getValue());
+        assertArrayEquals(new String[]{"def"}, param.getValues());
+    }
+
+    @Test
+    public void shouldNotOverrideTheProvidedValueWithTheDefaultValue()
+    {
+        final SimpleDslParam<?> param = new OptionalParam("foo").setDefault("def");
         param.addValue("1");
-        Assert.assertEquals("1", param.getValue());
-        Assert.assertArrayEquals(new String[]{"1"}, param.getValues());
+        assertEquals("1", param.getValue());
+        assertArrayEquals(new String[]{"1"}, param.getValues());
     }
 
     @Test
-    public void settingADefaultValueShouldMakeGetValueReturnItIfTheParameterIsNotSupplied()
-    {
-        final SimpleDslParam param = new OptionalParam("foo").setDefault("def");
-        Assert.assertEquals("def", param.getValue());
-        Assert.assertArrayEquals(new String[]{"def"}, param.getValues());
-    }
-
-    @Test
-    public void getValueShouldReturnNullIfThereIsNoParamAndNoDefault()
-    {
-        final SimpleDslParam param = new OptionalParam("foo");
-        Assert.assertEquals(null, param.getValue());
-        Assert.assertArrayEquals(new String[0], param.getValues());
-    }
-
-    @Test
-    public void consumerIsCalledForSingleValue()
+    public void shouldCallConsumeWhenAParameterValueIsProvided()
     {
         final LinkedList<String> list = new LinkedList<>();
         final Consumer<String> consumer = list::add;
-        final SimpleDslParam param = new OptionalParam("foo").setConsumer(consumer);
+        final SimpleDslParam<?> param = new OptionalParam("foo").setConsumer(consumer);
         param.addValue("abc");
 
-        Assert.assertEquals(1, list.size());
-        Assert.assertEquals("abc", list.get(0));
+        assertEquals(1, list.size());
+        assertEquals("abc", list.get(0));
     }
 
     @Test
-    public void consumerIsCalledForDefault()
+    public void shouldCallConsumeWithTheDefaultValueIfNoParameterValueIsProvided()
     {
         final LinkedList<String> list = new LinkedList<>();
         final Consumer<String> consumer = list::add;
-        final SimpleDslParam param = new OptionalParam("foo").setDefault("abc").setConsumer(consumer);
+        final SimpleDslParam<?> param = new OptionalParam("foo").setDefault("abc").setConsumer(consumer);
         param.completedParsing();
 
-        Assert.assertEquals(1, list.size());
-        Assert.assertEquals("abc", list.get(0));
+        assertEquals(1, list.size());
+        assertEquals("abc", list.get(0));
     }
 
     @Test
-    public void consumerIsNotCalledForOptionalWithNoDefault()
+    public void shouldNotCallConsumeIfNoParameterValueIsProvidedAndNoDefaultValueIsSet()
     {
         final LinkedList<String> list = new LinkedList<>();
         final Consumer<String> consumer = list::add;
-        final SimpleDslParam param = new OptionalParam("foo").setConsumer(consumer);
+        final SimpleDslParam<?> param = new OptionalParam("foo").setConsumer(consumer);
         param.completedParsing();
 
-        Assert.assertEquals(0, list.size());
+        assertEquals(0, list.size());
     }
 
 }

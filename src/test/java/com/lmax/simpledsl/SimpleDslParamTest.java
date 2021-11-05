@@ -15,124 +15,131 @@
  */
 package com.lmax.simpledsl;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class SimpleDslParamTest
 {
     @Test
-    public void testGetValueReturnsTheValueAdded()
+    public void shouldReturnTheValueAdded()
     {
-        final SimpleDslParam param = new TestParam("foo");
+        final SimpleDslParam<?> param = new TestParam("foo");
         param.addValue("12");
-        Assert.assertEquals("12", param.getValue());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSecondCallToAddValueWhenMultipleValuesNotAllowedThrowsIllegalArgumentException()
-    {
-        final SimpleDslParam param = new TestParam("foo");
-        param.addValue("12");
-        param.addValue("12");
+        assertEquals("12", param.getValue());
     }
 
     @Test
-    public void testCanAddMultipleValuesWhenMultipleValuesAllowed()
+    public void shouldAddMultipleValuesWhenMultipleValuesAreAllowed()
     {
-        final SimpleDslParam param = new TestParam("foo").setAllowMultipleValues();
-        param.addValue("12");
-        param.addValue("34");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCannotAddMultipleValuesIfAddMultipleValuesHasNotBeenCalled()
-    {
-        final SimpleDslParam param = new TestParam("foo");
+        final SimpleDslParam<?> param = new TestParam("foo").setAllowMultipleValues();
         param.addValue("12");
         param.addValue("34");
     }
 
     @Test
-    public void testGetValuesReturnsAllTheValuesAdded()
+    public void shouldReturnAllTheValuesAddedWhenMultipleValuesAreAllowed()
     {
-        final SimpleDslParam param = new TestParam("foo").setAllowMultipleValues();
+        final SimpleDslParam<?> param = new TestParam("foo").setAllowMultipleValues();
         param.addValue("12");
         param.addValue("34");
-        Assert.assertArrayEquals(new String[]{"12", "34"}, param.getValues());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetValueThrowsAnExceptionIfTheParamAllowsMultipleValues()
-    {
-        final SimpleDslParam param = new TestParam("foo").setAllowMultipleValues();
-        param.getValue();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testAddingAnAllowedValuesListRestrictsWhichValuesAreAllowed()
-    {
-        final SimpleDslParam param = new TestParam("foo").setAllowedValues("12", "34").setAllowMultipleValues();
-        param.addValue("12");
-        param.addValue("34");
-        param.addValue("56");
+        assertArrayEquals(new String[]{"12", "34"}, param.getValues());
     }
 
     @Test
-    public void requiredValuesAreMatchedCaseInsensitivelyButReturnedInTheCorrectCase()
+    public void shouldRestrictWhichValuesAreAllowed()
     {
-        final SimpleDslParam param = new TestParam("foo").setAllowedValues("abc", "def").setAllowMultipleValues();
+        final SimpleDslParam<?> param = new TestParam("foo").setAllowedValues("12", "34");
+
+        final IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> param.addValue("56"));
+
+        assertEquals("foo parameter value '56' must be one of: [12, 34]", exception.getMessage());
+    }
+
+    @Test
+    public void shouldMatchAllowedValuesCaseInsensitivelyButStillReturnTheValuesWithTheProvidedCase()
+    {
+        final SimpleDslParam<?> param = new TestParam("foo").setAllowedValues("abc", "def").setAllowMultipleValues();
         param.addValue("abc");
         param.addValue("DeF");
-        Assert.assertArrayEquals(new String[]{"abc", "def"}, param.getValues());
+        assertArrayEquals(new String[]{"abc", "def"}, param.getValues());
     }
 
     @Test
-    public void consumerIsCalledForSingleValue()
+    public void shouldCallConsumerWhenSingleValueProvided()
     {
         final LinkedList<String> list = new LinkedList<>();
         final Consumer<String> consumer = list::add;
-        final SimpleDslParam param = new TestParam("foo").setConsumer(consumer);
+        final SimpleDslParam<?> param = new TestParam("foo").setConsumer(consumer);
         param.addValue("abc");
 
-        Assert.assertEquals(1, list.size());
-        Assert.assertEquals("abc", list.get(0));
+        assertEquals(1, list.size());
+        assertEquals("abc", list.get(0));
     }
 
     @Test
-    public void consumerIsCalledForMultipleValuesInCorrectOrder()
+    public void shouldCallConsumerInCorrectOrderWhenMultipleValuesProvided()
     {
         final LinkedList<String> list = new LinkedList<>();
         final Consumer<String> consumer = list::add;
-        final SimpleDslParam param = new TestParam("foo").setAllowMultipleValues().setConsumer(consumer);
+        final SimpleDslParam<?> param = new TestParam("foo").setAllowMultipleValues().setConsumer(consumer);
         param.addValue("abc");
         param.addValue("def");
         param.addValue("ghi");
 
-        Assert.assertEquals(3, list.size());
-        Assert.assertEquals("abc", list.get(0));
-        Assert.assertEquals("def", list.get(1));
-        Assert.assertEquals("ghi", list.get(2));
+        assertEquals(3, list.size());
+        assertEquals("abc", list.get(0));
+        assertEquals("def", list.get(1));
+        assertEquals("ghi", list.get(2));
     }
 
     @Test
-    public void biConsumerIsCalledWithParameterName()
+    public void shouldCallBiConsumerWithTheCorrectParameterName()
     {
         final LinkedList<String> list = new LinkedList<>();
         final BiConsumer<String, String> consumer = (name, value) -> list.add(name);
-        final SimpleDslParam param1 = new TestParam("foo").setAllowMultipleValues().setConsumer(consumer);
-        final SimpleDslParam param2 = new TestParam("bar").setAllowMultipleValues().setConsumer(consumer);
+        final SimpleDslParam<?> param1 = new TestParam("foo").setAllowMultipleValues().setConsumer(consumer);
+        final SimpleDslParam<?> param2 = new TestParam("bar").setAllowMultipleValues().setConsumer(consumer);
         param1.addValue("abc");
         param1.addValue("def");
         param2.addValue("ghi");
 
-        Assert.assertEquals(3, list.size());
-        Assert.assertEquals("foo", list.get(0));
-        Assert.assertEquals("foo", list.get(1));
-        Assert.assertEquals("bar", list.get(2));
+        assertEquals(3, list.size());
+        assertEquals("foo", list.get(0));
+        assertEquals("foo", list.get(1));
+        assertEquals("bar", list.get(2));
+    }
+
+    @Test
+    public void shouldThrowExceptionOnSecondCallToAddValueWhenMultipleValuesNotAllowed()
+    {
+        final SimpleDslParam<?> param = new TestParam("foo");
+        param.addValue("12");
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> param.addValue("12"),
+                "Multiple foo parameters are not allowed");
+    }
+
+    @Test
+    public void shouldThrowExceptionOnAccessingASingleValueIfTheParamAllowsMultipleValues()
+    {
+        final SimpleDslParam<?> param = new TestParam("foo").setAllowMultipleValues();
+
+        final IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                param::getValue);
+
+        assertEquals("getValues() should be used when multiple values are allowed", exception.getMessage());
     }
 
     private static class TestParam extends SimpleDslParam<TestParam>
@@ -141,6 +148,5 @@ public class SimpleDslParamTest
         {
             super(name);
         }
-
     }
 }
