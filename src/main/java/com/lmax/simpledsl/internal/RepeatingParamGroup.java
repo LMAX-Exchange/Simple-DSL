@@ -16,62 +16,31 @@
 
 package com.lmax.simpledsl.internal;
 
-import com.lmax.simpledsl.api.RepeatingArgGroup;
 import com.lmax.simpledsl.api.RepeatingGroup;
-import com.lmax.simpledsl.api.SimpleDslArg;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static java.util.Arrays.stream;
 
 class RepeatingParamGroup extends DslParam
 {
-    protected final RepeatingArgGroup identity;
-    protected final Map<String, SimpleDslParam<?, ?>> paramsByName = new HashMap<>();
-    private final List<RepeatingParamValues> values = new ArrayList<>();
+    private final String name;
+    private final List<RepeatingParamValues> values;
 
-    RepeatingParamGroup(final RequiredParam firstParam, final SimpleDslParam<?, ?>... params)
+    RepeatingParamGroup(final String name, final List<RepeatingParamValues> values)
     {
-        this.identity = new RepeatingArgGroup(firstParam.getArg(), stream(params)
-                .map(SimpleDslParam::getArg)
-                .toArray(SimpleDslArg[]::new));
-
-        paramsByName.put(firstParam.getArg().getName(), firstParam);
-        Arrays.stream(params)
-                .forEach(param -> paramsByName.put(param.getArg().getName(), param));
-    }
-
-    RepeatingParamGroup(final RepeatingArgGroup group)
-    {
-        this(
-                new RequiredParam(group.getIdentity()),
-                stream(group.getOtherArgs())
-                        .map(arg -> (SimpleDslParam<?, ?>) arg.fold(
-                                RequiredParam::new,
-                                OptionalParam::new,
-                                invalid ->
-                                {
-                                    throw new IllegalArgumentException("Cannot nest RepeatingArgGroups");
-                                })
-                        )
-                        .toArray(SimpleDslParam[]::new)
-        );
+        this.name = name;
+        this.values = values;
     }
 
     @Override
-    public RepeatingArgGroup getArg()
+    public String getName()
     {
-        return identity;
+        return name;
     }
 
     @Override
-    public SimpleDslParam<?, ?> getAsSimpleDslParam()
+    public SimpleDslParam getAsSimpleDslParam()
     {
-        return null;
+        throw new IllegalArgumentException(name + " is a repeating group");
     }
 
     @Override
@@ -90,64 +59,9 @@ class RepeatingParamGroup extends DslParam
         return values.toArray(new RepeatingParamValues[0]);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @deprecated This is not intended to be part of the public API and will be removed in a future release.
-     */
-    @Override
-    public int consume(final int startingPosition, final NameValuePair... arguments)
-    {
-        final RepeatingParamValues group = new RepeatingParamValues();
-        int currentPosition = startingPosition;
-        while (currentPosition < arguments.length)
-        {
-            final NameValuePair argument = arguments[currentPosition];
-            if (argument != null)
-            {
-                final SimpleDslParam<?, ?> param = paramsByName.get(argument.getName());
-                if (param != null)
-                {
-                    if (group.hasValue(argument.getName()) && !param.getArg().isAllowMultipleValues())
-                    {
-                        break;
-                    }
-                    param.checkValidValue(argument.getValue());
-                    group.addValue(argument.getName(), argument.getValue());
-                    currentPosition++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                currentPosition++;
-            }
-        }
-        for (final SimpleDslParam<?, ?> param : paramsByName.values())
-        {
-            if (!group.hasValue(param.getArg().getName()))
-            {
-                if (param.getArg().isRequired())
-                {
-                    throw new IllegalArgumentException("Did not supply a value for " + param.getArg().getName() + " in group " + identity.getName());
-                }
-                else if (param.getDefaultValue() != null)
-                {
-                    group.addValue(param.getArg().getName(), param.getDefaultValue());
-                }
-            }
-        }
-        values.add(group);
-        return currentPosition;
-    }
-
     @Override
     public boolean hasValue()
     {
         return !values.isEmpty();
     }
-
 }

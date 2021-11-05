@@ -16,8 +16,6 @@
 
 package com.lmax.simpledsl.api;
 
-import java.util.function.Function;
-
 /**
  * A required argument.
  * <p>
@@ -50,7 +48,7 @@ import java.util.function.Function;
  * By default, only a single value is allowed.
  * Multiple values can be allowed by calling {@link #setAllowMultipleValues()}.
  */
-public class RequiredArg extends SimpleDslArg<RequiredArg>
+public class RequiredArg extends SimpleDslArg
 {
     public RequiredArg(final String name)
     {
@@ -58,8 +56,29 @@ public class RequiredArg extends SimpleDslArg<RequiredArg>
     }
 
     @Override
-    public <T> T fold(final Function<RequiredArg, T> ifRequired, final Function<OptionalArg, T> ifOptional, final Function<RepeatingArgGroup, T> ifGroup)
+    public RequiredArg setDefault(final String defaultValue)
     {
-        return ifRequired.apply(this);
+        throw new IllegalArgumentException("A required argument can not have a default value");
+    }
+
+    @Override
+    public RequiredArg setAllowedValues(final String... allowedValues)
+    {
+        super.setAllowedValues(allowedValues);
+        return this;
+    }
+
+    @Override
+    public RequiredArg setAllowMultipleValues()
+    {
+        super.setAllowMultipleValues();
+        return this;
+    }
+
+    @Override
+    public RequiredArg setAllowMultipleValues(final String delimiter)
+    {
+        super.setAllowMultipleValues(delimiter);
+        return this;
     }
 }

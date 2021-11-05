@@ -16,8 +16,6 @@
 
 package com.lmax.simpledsl.api;
 
-import java.util.function.Function;
-
 /**
  * The base class for all arg types.
  */
@@ -38,14 +36,13 @@ public interface DslArg
     boolean isRequired();
 
     /**
-     * Determine if a value is optional for this argument.
+     * Get a default value for this argument.
      *
-     * @return {@literal true} if and only if this argument is optional.
+     * If the argument is required, this method will throw an {@link IllegalArgumentException}.
+     *
+     * @return the default value for the argument
      */
-    default boolean isOptional()
-    {
-        return !isRequired();
-    }
+    String getDefaultValue();
 
     /**
      * Check whether this argument can take multiple values.
@@ -67,15 +64,4 @@ public interface DslArg
      * @return the values allowed by this argument, or {@literal null} if all values are allowed
      */
     String[] getAllowedValues();
-
-    /**
-     * Transform this {@link DslArg} by applying an appropriate {@link Function}.
-     *
-     * @param ifRequired the {@link Function} to apply if this {@link DslArg} is compatible with a {@link RequiredArg}.
-     * @param ifOptional the {@link Function} to apply if this {@link DslArg} is compatible with an {@link OptionalArg}.
-     * @param ifGroup    the {@link Function} to apply if this {@link DslArg} is compatible with a {@link RepeatingArgGroup}.
-     * @param <T>        the return type.
-     * @return the transformed object.
-     */
-    <T> T fold(Function<RequiredArg, T> ifRequired, Function<OptionalArg, T> ifOptional, Function<RepeatingArgGroup, T> ifGroup);
 }

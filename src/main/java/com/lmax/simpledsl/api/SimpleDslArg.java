@@ -18,16 +18,15 @@ package com.lmax.simpledsl.api;
 
 /**
  * The root type for all simple args.
- *
- * @param <P> the actual type of simple argument.
  */
-public abstract class SimpleDslArg<P extends SimpleDslArg<P>> implements DslArg
+public abstract class SimpleDslArg implements DslArg
 {
     private static final String DEFAULT_DELIMITER = ",";
 
     private final String name;
     private final boolean required;
 
+    protected String defaultValue;
     protected boolean allowMultipleValues;
     protected String multipleValueSeparator;
     protected String[] allowedValues;
@@ -51,6 +50,17 @@ public abstract class SimpleDslArg<P extends SimpleDslArg<P>> implements DslArg
     }
 
     @Override
+    public String getDefaultValue()
+    {
+        if (required)
+        {
+            throw new IllegalArgumentException("A required argument can not have a default value");
+        }
+
+        return defaultValue;
+    }
+
+    @Override
     public boolean isAllowMultipleValues()
     {
         return allowMultipleValues;
@@ -69,16 +79,32 @@ public abstract class SimpleDslArg<P extends SimpleDslArg<P>> implements DslArg
     }
 
     /**
+     * Set a default value for this argument.
+     * <p>
+     * If a default is provided, the argument will be considered to always have a value, and will return the default if
+     * no other value is provided by the caller.
+     *
+     * @param defaultValue the default value for the argument.
+     * @return this argument
+     * @throws IllegalArgumentException if the default value cannot be set
+     */
+    public SimpleDslArg setDefault(final String defaultValue)
+    {
+        this.defaultValue = defaultValue;
+        return this;
+    }
+
+    /**
      * Restrict the allowed values for this argument to the specified set.
      * Specifying a value outside of this set will result in an exception being thrown when parsing the arguments.
      *
      * @param allowedValues the allowable values for this argument.
      * @return this argument
      */
-    public P setAllowedValues(final String... allowedValues)
+    public SimpleDslArg setAllowedValues(final String... allowedValues)
     {
         this.allowedValues = allowedValues;
-        return me();
+        return this;
     }
 
     /**
@@ -93,7 +119,7 @@ public abstract class SimpleDslArg<P extends SimpleDslArg<P>> implements DslArg
      * @return this argument
      * @see #setAllowMultipleValues(String)
      */
-    public P setAllowMultipleValues()
+    public SimpleDslArg setAllowMultipleValues()
     {
         return setAllowMultipleValues(DEFAULT_DELIMITER);
     }
@@ -105,16 +131,10 @@ public abstract class SimpleDslArg<P extends SimpleDslArg<P>> implements DslArg
      * @return this argument
      * @see #setAllowMultipleValues()
      */
-    public P setAllowMultipleValues(final String delimiter)
+    public SimpleDslArg setAllowMultipleValues(final String delimiter)
     {
         allowMultipleValues = true;
         multipleValueSeparator = delimiter;
-        return me();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected P me()
-    {
-        return (P) this;
+        return this;
     }
 }

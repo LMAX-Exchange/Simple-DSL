@@ -25,48 +25,48 @@ public class NameValuePairTest
     @Test
     public void shouldSplitNameAndValueWithEquals()
     {
-        final NameValuePair pair = new NameValuePair("a=1");
-        assertEquals("a", pair.getName());
-        assertEquals("1", pair.getValue());
+        final NameValuePair pair = NameValuePair.fromArgumentString("a=1");
+        assertEquals("a", pair.name);
+        assertEquals("1", pair.value);
     }
 
     @Test
     public void shouldSplitNameAndValueWithColon()
     {
-        final NameValuePair pair = new NameValuePair("a:1");
-        assertEquals("a", pair.getName());
-        assertEquals("1", pair.getValue());
+        final NameValuePair pair = NameValuePair.fromArgumentString("a:1");
+        assertEquals("a", pair.name);
+        assertEquals("1", pair.value);
     }
 
     @Test
     public void shouldTrimWhitespace()
     {
-        final NameValuePair pair = new NameValuePair(" a = 1 ");
-        assertEquals("a", pair.getName());
-        assertEquals("1", pair.getValue());
+        final NameValuePair pair = NameValuePair.fromArgumentString(" a = 1 ");
+        assertEquals("a", pair.name);
+        assertEquals("1", pair.value);
     }
 
     @Test
     public void shouldPreserveValueIfMultipleSplitTokensArePresent()
     {
-        final NameValuePair pair = new NameValuePair("message: ERROR: Something went wrong!");
-        assertEquals("message", pair.getName());
-        assertEquals("ERROR: Something went wrong!", pair.getValue());
+        final NameValuePair pair = NameValuePair.fromArgumentString("message: ERROR: Something went wrong!");
+        assertEquals("message", pair.name);
+        assertEquals("ERROR: Something went wrong!", pair.value);
     }
 
     @Test
     public void shouldSetTheNameToNullAndAssignsEverythingToTheValueInAnUnnamedPair()
     {
-        final NameValuePair pair = new NameValuePair("value without a name");
-        assertNull(pair.getName());
-        assertEquals("value without a name", pair.getValue());
+        final NameValuePair pair = NameValuePair.fromArgumentString("value without a name");
+        assertNull(pair.name);
+        assertEquals("value without a name", pair.value);
     }
 
     @Test
     public void shouldUseAnEmptyStringWhenNoValueIsProvided()
     {
-        final NameValuePair pair = new NameValuePair("name:");
-        assertEquals("name", pair.getName());
-        assertEquals("", pair.getValue());
+        final NameValuePair pair = NameValuePair.fromArgumentString("name:");
+        assertEquals("name", pair.name);
+        assertEquals("", pair.value);
     }
 }

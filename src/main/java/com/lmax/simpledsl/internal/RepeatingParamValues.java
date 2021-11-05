@@ -1,25 +1,20 @@
 package com.lmax.simpledsl.internal;
 
+import com.lmax.simpledsl.api.DslArg;
 import com.lmax.simpledsl.api.RepeatingGroup;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 class RepeatingParamValues implements RepeatingGroup
 {
-    private final Map<String, List<String>> valuesByName = new HashMap<>();
+    private final DslArg[] dslArgs;
+    private final Map<String, List<String>> valuesByName;
 
-    void addValue(final String name, final String value)
+    RepeatingParamValues(final DslArg[] dslArgs, final Map<String, List<String>> valuesByName)
     {
-        List<String> values = getValues(name);
-        if (values == null)
-        {
-            values = new ArrayList<>();
-            valuesByName.put(name.toLowerCase(), values);
-        }
-        values.add(value);
+        this.dslArgs = dslArgs;
+        this.valuesByName = valuesByName;
     }
 
     @Override
@@ -39,7 +34,13 @@ class RepeatingParamValues implements RepeatingGroup
     public String[] values(final String name)
     {
         final List<String> values = getValues(name);
-        return values != null ? values.toArray(new String[values.size()]) : new String[0];
+        return values != null ? values.toArray(new String[0]) : new String[0];
+    }
+
+    @Override
+    public DslArg[] getParams()
+    {
+        return dslArgs;
     }
 
     private List<String> getValues(final String name)

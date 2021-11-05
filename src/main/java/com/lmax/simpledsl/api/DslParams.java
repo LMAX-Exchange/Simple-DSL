@@ -16,7 +16,7 @@
 
 package com.lmax.simpledsl.api;
 
-import com.lmax.simpledsl.internal.DslParamsImpl;
+import com.lmax.simpledsl.internal.DslParamsParser;
 
 /**
  * The main entry point for defining the DSL language. Create a DslParams instance with the supplied arguments and the supported params.
@@ -53,6 +53,19 @@ public interface DslParams extends DslValues
     RepeatingGroup[] valuesAsGroup(String groupName);
 
     /**
+     * Create new {@link DslParams}.
+     *
+     * @param args the values
+     * @param arguments the {@link DslArg args}
+     * @return the new {@link DslParams}
+     */
+    static DslParams create(String[] args, DslArg... arguments)
+    {
+        return new DslParamsParser().parse(args, arguments);
+    }
+
+
+    /**
      * A shorthand way to create a {@link DslParams} instance that accepts a single required parameter and return the
      * value that was supplied for that parameter.
      *
@@ -62,31 +75,9 @@ public interface DslParams extends DslValues
      */
     static String getSingleRequiredParamValue(final String[] args, final String requiredParamName)
     {
-        return create(args, new RequiredArg(requiredParamName)).value(requiredParamName);
+        return new DslParamsParser()
+                .parse(args, new RequiredArg(requiredParamName))
+                .value(requiredParamName);
     }
 
-    /**
-     * Utility method for defining a DSL method that doesn't accept any arguments.
-     *
-     * This is an alternative to removing the {@code String... args} parameter entirely when a consistent public API is desired.
-     *
-     * @param args the parameters provided.
-     */
-    static void checkEmpty(final String[] args)
-    {
-        new DslParamsImpl(args);
-    }
-
-    /**
-     * Create a new DslParams to define the supported dsl language.
-     *
-     * @param args   the arguments supplied by the test.
-     * @param params the supported parameters.
-     * @return the parsed {@link DslParams}
-     * @throws IllegalArgumentException if an invalid parameter is specified
-     */
-    static DslParams create(final String[] args, final DslArg... params)
-    {
-        return new DslParamsImpl(args, params);
-    }
 }

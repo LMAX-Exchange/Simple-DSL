@@ -16,8 +16,6 @@
 
 package com.lmax.simpledsl.api;
 
-import java.util.function.Function;
-
 /**
  * Define a group of arguments that can be repeated 0 or more times.
  * <p>
@@ -45,9 +43,9 @@ import java.util.function.Function;
 public class RepeatingArgGroup implements DslArg
 {
     private final RequiredArg identity;
-    private final DslArg[] otherArgs;
+    private final SimpleDslArg[] otherArgs;
 
-    public RepeatingArgGroup(final RequiredArg firstArg, final SimpleDslArg<?>... otherArgs)
+    public RepeatingArgGroup(final RequiredArg firstArg, final SimpleDslArg... otherArgs)
     {
         this.identity = firstArg;
         this.otherArgs = otherArgs;
@@ -63,6 +61,12 @@ public class RepeatingArgGroup implements DslArg
     public boolean isRequired()
     {
         return false;
+    }
+
+    @Override
+    public String getDefaultValue()
+    {
+        throw new IllegalArgumentException("A repeating group can not have a default value");
     }
 
     @Override
@@ -99,14 +103,8 @@ public class RepeatingArgGroup implements DslArg
      *
      * @return the {@link DslArg DslArgs}.
      */
-    public DslArg[] getOtherArgs()
+    public SimpleDslArg[] getOtherArgs()
     {
         return otherArgs;
-    }
-
-    @Override
-    public <T> T fold(final Function<RequiredArg, T> ifRequired, final Function<OptionalArg, T> ifOptional, final Function<RepeatingArgGroup, T> ifGroup)
-    {
-        return ifGroup.apply(this);
     }
 }

@@ -16,25 +16,13 @@
 
 package com.lmax.simpledsl.internal;
 
-import com.lmax.simpledsl.api.DslArg;
-
-/**
- * The base class for all param types.
- */
 abstract class DslParam
 {
-    abstract DslArg getArg();
+    abstract String getName();
 
-    abstract SimpleDslParam<?, ?> getAsSimpleDslParam();
+    abstract SimpleDslParam getAsSimpleDslParam();
 
     abstract RepeatingParamGroup asRepeatingParamGroup();
 
-    abstract int consume(int currentPosition, NameValuePair... args);
-
     abstract boolean hasValue();
-
-    boolean isValid()
-    {
-        return true;
-    }
 }

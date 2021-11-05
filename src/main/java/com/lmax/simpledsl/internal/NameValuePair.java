@@ -17,42 +17,33 @@ package com.lmax.simpledsl.internal;
 
 class NameValuePair
 {
-    private static final String SPLIT_NAME_VALUE_REGEX = "=|:";
+    static final NameValuePair NULL = new NameValuePair(null, null, null);
 
-    private final String originalValue;
-    private final String name;
-    private final String value;
+    private static final String SPLIT_NAME_VALUE_REGEX = "[=:]";
 
-    NameValuePair(final String argString)
+    public final String originalValue;
+    public final String name;
+    public final String value;
+
+    NameValuePair(final String originalValue, final String name, final String value)
     {
-        originalValue = argString;
-        final String[] splitArg = (argString + " ").split(SPLIT_NAME_VALUE_REGEX);
-        if (splitArg.length == 1)
+        this.originalValue = originalValue;
+        this.name = name;
+        this.value = value;
+    }
+
+    static NameValuePair fromArgumentString(final String argString)
+    {
+        if (argString == null)
         {
-            name = null;
-            value = argString.trim();
+            return NULL;
         }
         else
         {
-            name = splitArg[0].trim();
-            // result is the remainder of argString, in case it contains the split regex chars too
-            value = argString.substring(splitArg[0].length() + 1).trim();
+            final String[] splitArg = (argString + " ").split(SPLIT_NAME_VALUE_REGEX, 2);
+            return splitArg.length == 2
+                    ? new NameValuePair(argString, splitArg[0].trim(), splitArg[1].trim())
+                    : new NameValuePair(argString, null, argString.trim());
         }
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public String getValue()
-    {
-        return value;
-    }
-
-    @Override
-    public String toString()
-    {
-        return originalValue;
     }
 }

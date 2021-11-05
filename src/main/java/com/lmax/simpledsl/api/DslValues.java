@@ -298,4 +298,11 @@ public interface DslValues
         }
         return parsedValues;
     }
+
+    /**
+     * Get the supported parameters. Supplied values will have been parsed into the parameters.
+     *
+     * @return the array of {@link DslArg DslArgs} supplied to the constructor.
+     */
+    DslArg[] getParams();
 }

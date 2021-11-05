@@ -15,48 +15,28 @@
  */
 package com.lmax.simpledsl.internal;
 
-import com.lmax.simpledsl.api.SimpleDslArg;
-
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
-abstract class SimpleDslParam<A extends SimpleDslArg<A>, P extends SimpleDslParam<A, P>> extends DslParam
+class SimpleDslParam extends DslParam
 {
-    private final A arg;
-    private final List<String> values = new LinkedList<>();
+    private final String name;
+    private final List<String> values;
 
-    SimpleDslParam(final A arg)
+    SimpleDslParam(final String name, final List<String> values)
     {
-        this.arg = arg;
+        this.name = name;
+        this.values = values;
     }
 
     @Override
-    public A getArg()
+    public String getName()
     {
-        return arg;
-    }
-
-    P setAllowedValues(final String... allowedValues)
-    {
-        arg.setAllowedValues(allowedValues);
-        return me();
-    }
-
-    P setAllowMultipleValues()
-    {
-        arg.setAllowMultipleValues();
-        return me();
-    }
-
-    P setAllowMultipleValues(final String delimiter)
-    {
-        arg.setAllowMultipleValues(delimiter);
-        return me();
+        return name;
     }
 
     @Override
-    SimpleDslParam<?, ?> getAsSimpleDslParam()
+    SimpleDslParam getAsSimpleDslParam()
     {
         return this;
     }
@@ -64,77 +44,24 @@ abstract class SimpleDslParam<A extends SimpleDslArg<A>, P extends SimpleDslPara
     @Override
     RepeatingParamGroup asRepeatingParamGroup()
     {
-        return null;
-    }
-
-    @Override
-    int consume(final int currentPosition, final NameValuePair... args)
-    {
-        final NameValuePair arg = args[currentPosition];
-        addValue(null == arg ? null : arg.getValue());
-        return currentPosition + 1;
+        throw new IllegalArgumentException(name + " is not a repeating group");
     }
 
     @Override
     boolean hasValue()
     {
-        return arg.isAllowMultipleValues() ? getValues().length > 0 : getValue() != null;
+        return !values.isEmpty();
     }
 
-    String getDefaultValue()
+    /**
+     * Get the value for this parameter. If multiple values are allowed, use {@link #getValues()} instead.
+     *
+     * @return the value for this parameter or {@code null} if the parameter has no value.
+     * @throws IllegalArgumentException if multiple values are allowed.
+     */
+    public String getValue()
     {
-        return null;
-    }
-
-    void addValue(final String value)
-    {
-        if (arg.isAllowMultipleValues())
-        {
-            final String[] values = value.split(arg.getMultipleValueSeparator());
-            for (final String singleValue : values)
-            {
-                addSingleValue(singleValue.trim());
-            }
-        }
-        else
-        {
-            addSingleValue(value);
-        }
-    }
-
-    private void addSingleValue(final String value)
-    {
-        checkCanAddValue();
-        values.add(checkValidValue(value));
-    }
-
-    String checkValidValue(final String value)
-    {
-        if (arg.getAllowedValues() != null)
-        {
-            for (final String allowedValue : arg.getAllowedValues())
-            {
-                if (allowedValue.equalsIgnoreCase(value))
-                {
-                    return allowedValue;
-                }
-            }
-            throw new IllegalArgumentException(arg.getName() + " parameter value '" + value + "' must be one of: " + Arrays.toString(arg.getAllowedValues()));
-        }
-        return value;
-    }
-
-    private void checkCanAddValue()
-    {
-        if (!arg.isAllowMultipleValues() && values.size() == 1)
-        {
-            throw new IllegalArgumentException("Multiple " + arg.getName() + " parameters are not allowed");
-        }
-    }
-
-    String getValue()
-    {
-        if (arg.isAllowMultipleValues())
+        if (values.size() > 1)
         {
             throw new IllegalArgumentException("getValues() should be used when multiple values are allowed");
         }
@@ -142,14 +69,13 @@ abstract class SimpleDslParam<A extends SimpleDslArg<A>, P extends SimpleDslPara
         return strings.length > 0 ? strings[0] : null;
     }
 
-    String[] getValues()
+    List<String> getValuesAsList()
     {
-        return values.toArray(new String[0]);
+        return Collections.unmodifiableList(values);
     }
 
-    @SuppressWarnings("unchecked")
-    protected P me()
+    String[] getValues()
     {
-        return (P) this;
+        return getValuesAsList().toArray(new String[0]);
     }
 }

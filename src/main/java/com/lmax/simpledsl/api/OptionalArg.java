@@ -16,8 +16,6 @@
 
 package com.lmax.simpledsl.api;
 
-import java.util.function.Function;
-
 /**
  * An optional argument.
  * <p>
@@ -45,43 +43,10 @@ import java.util.function.Function;
  *
  * @see DslValues#valueAsOptional(String)
  */
-public class OptionalArg extends SimpleDslArg<OptionalArg>
+public class OptionalArg extends SimpleDslArg
 {
-    private String defaultValue;
-
     public OptionalArg(final String name)
     {
         super(name, false);
-    }
-
-    /**
-     * Get a default value for this argument.
-     *
-     * @return the default value for the argument
-     */
-    public String getDefaultValue()
-    {
-        return defaultValue;
-    }
-
-    /**
-     * Set a default value for this argument.
-     * <p>
-     * If a default is provided, the argument will be considered to always have a value, and will return the default if
-     * no other value is provided by the caller.
-     *
-     * @param defaultValue the default value for the argument.
-     * @return this argument
-     */
-    public OptionalArg setDefault(final String defaultValue)
-    {
-        this.defaultValue = defaultValue;
-        return this;
-    }
-
-    @Override
-    public <T> T fold(final Function<RequiredArg, T> ifRequired, final Function<OptionalArg, T> ifOptional, final Function<RepeatingArgGroup, T> ifGroup)
-    {
-        return ifOptional.apply(this);
     }
 }
