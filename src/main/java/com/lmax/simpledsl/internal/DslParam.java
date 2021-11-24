@@ -13,29 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lmax.simpledsl;
 
-/**
- * Thrown when a -usage parameter is supplied.
- *
- * @deprecated To be removed in a future release. Use {@link DslParams#getParams()} instead.
- */
-public class DslParamsUsageException extends RuntimeException
+package com.lmax.simpledsl.internal;
+
+abstract class DslParam
 {
-    private final DslParam[] params;
+    abstract String getName();
 
-    public DslParamsUsageException(final DslParam[] params)
-    {
-        this.params = params;
-    }
+    abstract SimpleDslParam getAsSimpleDslParam();
 
-    /**
-     * Get the supported parameters.
-     *
-     * @return the supported parameters.
-     */
-    public DslParam[] getParams()
-    {
-        return params;
-    }
+    abstract RepeatingParamGroup asRepeatingParamGroup();
+
+    abstract boolean hasValue();
 }
