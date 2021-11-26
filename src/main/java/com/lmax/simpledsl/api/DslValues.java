@@ -17,10 +17,16 @@
 package com.lmax.simpledsl.api;
 
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Arrays.stream;
 
 /**
  * Base class for value containers such as {@link DslParams} and {@link RepeatingGroup}.
@@ -63,6 +69,57 @@ public interface DslValues
     String[] values(String name);
 
     /**
+     * Retrieve the value supplied for a parameter, mapping it using the specified {@link Function function}.
+     *
+     * @param name   the name of the parameter.
+     * @param mapper the mapping {@link Function}.
+     * @param <T>    the return type of {@literal mapper}.
+     * @return the value supplied for that parameter.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
+     */
+    default <T> T valueAs(final String name, final Function<String, T> mapper)
+    {
+        final String value = value(name);
+        return value != null ? mapper.apply(value) : null;
+    }
+
+    /**
+     * Retrieve the values supplied for a parameter, mapping each provided value using the specified
+     * {@link Function function} and returning a {@link Stream} of these values.
+     * <p>
+     * Returns an empty {@link Stream} if the parameter is optional and a value has not been supplied.
+     *
+     * @param name   the name of the parameter.
+     * @param mapper the mapping {@link Function}.
+     * @param <T>    the return type of {@literal mapper}.
+     * @return a {@link Stream} of values supplied for the parameter.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
+     */
+    default <T> Object[] valuesAs(final String name, final Function<String, T> mapper)
+    {
+        return stream(values(name)).map(mapper).toArray();
+    }
+
+    /**
+     * Retrieve the values supplied for a parameter, mapping each provided value using the specified
+     * {@link Function function} and returning a {@link Stream} of these values.
+     * <p>
+     * Returns an empty {@link Stream} if the parameter is optional and a value has not been supplied.
+     *
+     * @param name   the name of the parameter.
+     * @param type   the return type of {@literal mapper}
+     * @param mapper the mapping {@link Function}.
+     * @param <T>    the return type of {@literal mapper}.
+     * @return a {@link Stream} of values supplied for the parameter.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
+     */
+    @SuppressWarnings("unchecked")
+    default <T> T[] valuesAs(final String name, final Class<T> type, final Function<String, T> mapper)
+    {
+        return stream(values(name)).map(mapper).toArray(n -> (T[]) Array.newInstance(type, n));
+    }
+
+    /**
      * Retrieve the value supplied for a parameter as an {@link Optional}.
      * <p>
      * The optional will be empty if the parameter was not supplied.
@@ -77,29 +134,19 @@ public interface DslValues
     }
 
     /**
-     * Retrieve the value supplied for a parameter as an int.
+     * Retrieve the value supplied for a parameter as an {@link Optional}.
+     * <p>
+     * The optional will be empty if the parameter was not supplied.
      *
-     * @param name the name of the parameter.
-     * @return the value supplied for that parameter.
+     * @param name   the name of the parameter.
+     * @param mapper the mapping {@link Function}.
+     * @param <T>    the return type of {@literal mapper}.
+     * @return an Optional containing the value supplied for the parameter, if any.
      * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
-     * @throws NumberFormatException    if the supplied value can't be parsed as an {@code int} (including because it wasn't supplied).
      */
-    default int valueAsInt(final String name)
+    default <T> Optional<T> valueAsOptionalOf(final String name, final Function<String, T> mapper)
     {
-        return Integer.parseInt(value(name));
-    }
-
-    /**
-     * Retrieve the value supplied for a parameter as a long.
-     *
-     * @param name the name of the parameter.
-     * @return the value supplied for that parameter.
-     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
-     * @throws NumberFormatException    if the supplied value can't be parsed as a {@code long} (including because it wasn't supplied).
-     */
-    default long valueAsLong(final String name)
-    {
-        return Long.parseLong(value(name));
+        return Optional.ofNullable(value(name)).map(mapper);
     }
 
     /**
@@ -113,7 +160,48 @@ public interface DslValues
      */
     default boolean valueAsBoolean(final String name)
     {
-        return Boolean.parseBoolean(value(name));
+        return valueAs(name, Boolean::parseBoolean);
+    }
+
+    /**
+     * Retrieve the value supplied for a parameter as an int.
+     *
+     * @param name the name of the parameter.
+     * @return the value supplied for that parameter.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
+     * @throws NumberFormatException    if the supplied value can't be parsed as an {@code int} (including because it wasn't supplied).
+     */
+    default int valueAsInt(final String name)
+    {
+        return valueAs(name, Integer::parseInt);
+    }
+
+    /**
+     * Retrieve the value supplied for a parameter as a long.
+     *
+     * @param name the name of the parameter.
+     * @return the value supplied for that parameter.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
+     * @throws NumberFormatException    if the supplied value can't be parsed as a {@code long} (including because it wasn't supplied).
+     */
+    default long valueAsLong(final String name)
+    {
+        return valueAs(name, Long::parseLong);
+    }
+
+    /**
+     * Retrieve the value supplied for a parameter as a {@code double}.
+     * <p>
+     * The value is parsed using {@link Double#parseDouble(String)}.
+     *
+     * @param name the name of the parameter.
+     * @return the value supplied for that parameter.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
+     * @throws NumberFormatException    if the supplied value can't be parsed as a {@code double}
+     */
+    default double valueAsDouble(final String name)
+    {
+        return valueAs(name, Double::parseDouble);
     }
 
     /**
@@ -128,24 +216,7 @@ public interface DslValues
      */
     default BigDecimal valueAsBigDecimal(final String name)
     {
-        final String value = value(name);
-        return value != null ? new BigDecimal(value) : null;
-    }
-
-
-    /**
-     * Retrieve the value supplied for a parameter as a {@code double}.
-     * <p>
-     * The value is parsed using {@link Double#parseDouble(String)}.
-     *
-     * @param name the name of the parameter.
-     * @return the value supplied for that parameter.
-     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
-     * @throws NumberFormatException    if the supplied value can't be parsed as a {@code double}
-     */
-    default double valueAsDouble(final String name)
-    {
-        return Double.parseDouble(value(name));
+        return valueAs(name, BigDecimal::new);
     }
 
     /**
@@ -187,6 +258,20 @@ public interface DslValues
     }
 
     /**
+     * Retrieve the values supplied for a parameter as a {@link List}. Returns an empty list if the parameter is optional and a value has not been supplied.
+     *
+     * @param name   the name of the parameter.
+     * @param mapper the mapping {@link Function}.
+     * @param <T>    the return type of {@literal mapper}.
+     * @return a List of values supplied for the parameter.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
+     */
+    default <T> List<T> valuesAsListOf(final String name, final Function<String, T> mapper)
+    {
+        return stream(values(name)).map(mapper).collect(Collectors.toList());
+    }
+
+    /**
      * Retrieve the values supplied for a parameter as an {@link Optional} {@link List}.
      * <p>
      * Returns an empty Optional if the parameter is optional and a value has not been supplied.
@@ -211,8 +296,8 @@ public interface DslValues
      */
     default Optional<List<String>> valuesAsOptional(final String name)
     {
-        final List<String> values = valuesAsList(name);
-        return values.isEmpty() ? Optional.empty() : Optional.of(values);
+        return Optional.of(valuesAsList(name))
+                .filter(list -> !list.isEmpty());
     }
 
     /**
@@ -227,13 +312,9 @@ public interface DslValues
      */
     default int[] valuesAsInts(final String name)
     {
-        final String[] values = values(name);
-        final int[] parsedValues = new int[values.length];
-        for (int i = 0; i < values.length; i++)
-        {
-            parsedValues[i] = Integer.parseInt(values[i]);
-        }
-        return parsedValues;
+        return stream(values(name))
+                .mapToInt(Integer::parseInt)
+                .toArray();
     }
 
     /**
@@ -248,34 +329,9 @@ public interface DslValues
      */
     default long[] valuesAsLongs(final String name)
     {
-        final String[] values = values(name);
-        final long[] parsedValues = new long[values.length];
-        for (int i = 0; i < values.length; i++)
-        {
-            parsedValues[i] = Long.parseLong(values[i]);
-        }
-        return parsedValues;
-    }
-
-    /**
-     * Retrieve the values supplied for a parameter as a {@link BigDecimal} array.
-     * <p>
-     * Returns an empty array if the parameter is optional and a value has not been supplied.
-     *
-     * @param name the name of the parameter.
-     * @return an array of values supplied for the parameter.
-     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
-     * @throws NumberFormatException    if any of the supplied values can not be parsed as an {@code BigDecimal}.
-     */
-    default BigDecimal[] valuesAsBigDecimals(final String name)
-    {
-        final String[] values = values(name);
-        final BigDecimal[] parsedValues = new BigDecimal[values.length];
-        for (int i = 0; i < values.length; i++)
-        {
-            parsedValues[i] = new BigDecimal(values[i]);
-        }
-        return parsedValues;
+        return stream(values(name))
+                .mapToLong(Long::parseLong)
+                .toArray();
     }
 
     /**
@@ -290,13 +346,24 @@ public interface DslValues
      */
     default double[] valuesAsDoubles(final String name)
     {
-        final String[] values = values(name);
-        final double[] parsedValues = new double[values.length];
-        for (int i = 0; i < values.length; i++)
-        {
-            parsedValues[i] = Double.parseDouble(values[i]);
-        }
-        return parsedValues;
+        return stream(values(name))
+                .mapToDouble(Double::parseDouble)
+                .toArray();
+    }
+
+    /**
+     * Retrieve the values supplied for a parameter as a {@link BigDecimal} array.
+     * <p>
+     * Returns an empty array if the parameter is optional and a value has not been supplied.
+     *
+     * @param name the name of the parameter.
+     * @return an array of values supplied for the parameter.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
+     * @throws NumberFormatException    if any of the supplied values can not be parsed as an {@code BigDecimal}.
+     */
+    default BigDecimal[] valuesAsBigDecimals(final String name)
+    {
+        return valuesAs(name, BigDecimal.class, BigDecimal::new);
     }
 
     /**
