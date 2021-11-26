@@ -58,6 +58,16 @@ public class DslParamsImplTest
     }
 
     @Test
+    public void shouldReturnValueAsAnEnum()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", singletonList("VALUE_1"));
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertEquals(TestValues.VALUE_1, params.valueAs("a", TestValues.class));
+    }
+
+    @Test
     public void shouldReturnMultipleValues()
     {
         final SimpleDslParam aParam = new SimpleDslParam("a", asList("Hello World", "Goodbye, Cruel World"));
@@ -90,6 +100,19 @@ public class DslParamsImplTest
         assertArrayEquals(
                 new TestValues[] {TestValues.VALUE_1, TestValues.VALUE_2},
                 params.valuesAs("a", TestValues.class, TestValues::valueOf)
+        );
+    }
+
+    @Test
+    public void shouldReturnMultipleValuesAsAnEnum()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("VALUE_1", "VALUE_2"));
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertArrayEquals(
+                new TestValues[] {TestValues.VALUE_1, TestValues.VALUE_2},
+                params.valuesAs("a", TestValues.class)
         );
     }
 

@@ -84,6 +84,20 @@ public interface DslValues
     }
 
     /**
+     * Retrieve the value supplied for a parameter, mapping it to the specified {@link Enum}.
+     *
+     * @param name     the name of the parameter.
+     * @param enumType the {@link Enum} type.
+     * @param <T>      the {@link Enum} type.
+     * @return the value supplied for that parameter.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
+     */
+    default <T extends Enum<T>> T valueAs(final String name, final Class<T> enumType)
+    {
+        return valueAs(name, val -> Enum.valueOf(enumType, val));
+    }
+
+    /**
      * Retrieve the values supplied for a parameter, mapping each provided value using the specified
      * {@link Function function} and returning a {@link Stream} of these values.
      * <p>
@@ -117,6 +131,23 @@ public interface DslValues
     default <T> T[] valuesAs(final String name, final Class<T> type, final Function<String, T> mapper)
     {
         return stream(values(name)).map(mapper).toArray(n -> (T[]) Array.newInstance(type, n));
+    }
+
+    /**
+     * Retrieve the values supplied for a parameter, mapping each provided value using the specified
+     * {@link Function function} and returning an array of these values.
+     * <p>
+     * Returns an empty {@link Stream} if the parameter is optional and a value has not been supplied.
+     *
+     * @param name   the name of the parameter.
+     * @param enumType the {@link Enum} type.
+     * @param <T>      the {@link Enum} type.
+     * @return a {@link Stream} of values supplied for the parameter.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
+     */
+    default <T extends Enum<T>> T[] valuesAs(final String name, final Class<T> enumType)
+    {
+        return valuesAs(name, enumType, val -> Enum.valueOf(enumType, val));
     }
 
     /**
