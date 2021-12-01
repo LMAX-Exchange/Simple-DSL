@@ -19,8 +19,13 @@ import com.lmax.simpledsl.api.DslArg;
 import com.lmax.simpledsl.api.DslParams;
 import com.lmax.simpledsl.api.RepeatingGroup;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 
 /**
  * The internal implementation of {@link DslParams}.
@@ -56,6 +61,18 @@ final class DslParamsImpl implements DslParams
         final DslParam param = getDslParam(groupName);
         final RepeatingParamGroup repeatingParamGroup = param.asRepeatingParamGroup();
         return repeatingParamGroup.values();
+    }
+
+    @Override
+    public String[] copyArgs(final String... argsToCopy)
+    {
+        final Set<String> uniqueArgsToCopy = new HashSet<>(asList(argsToCopy));
+        return stream(args)
+                .map(DslArg::getName)
+                .filter(uniqueArgsToCopy::contains)
+                .map(this::getDslParam)
+                .flatMap(param -> stream(param.rawArgs()))
+                .toArray(String[]::new);
     }
 
     @Override

@@ -53,6 +53,14 @@ public interface DslParams extends DslValues
     RepeatingGroup[] valuesAsGroup(String groupName);
 
     /**
+     * Create a new {@literal array} of arguments that can be re-parsed into a new instance of {@link DslParams}.
+     *
+     * @param args the name of the arguments to copy
+     * @return the new {@literal array} of parameters
+     */
+    String[] copyArgs(String... args);
+
+    /**
      * Create new {@link DslParams}.
      *
      * @param args the values
@@ -63,7 +71,6 @@ public interface DslParams extends DslValues
     {
         return new DslParamsParser().parse(args, arguments);
     }
-
 
     /**
      * A shorthand way to create a {@link DslParams} instance that accepts a single required parameter and return the
@@ -79,5 +86,4 @@ public interface DslParams extends DslValues
                 .parse(args, new RequiredArg(requiredParamName))
                 .value(requiredParamName);
     }
-
 }

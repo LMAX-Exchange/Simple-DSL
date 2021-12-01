@@ -25,4 +25,6 @@ abstract class DslParam
     abstract RepeatingParamGroup asRepeatingParamGroup();
 
     abstract boolean hasValue();
+
+    abstract String[] rawArgs();
 }
