@@ -20,6 +20,8 @@ import com.lmax.simpledsl.api.RepeatingGroup;
 
 import java.util.List;
 
+import static java.util.Arrays.stream;
+
 class RepeatingParamGroup extends DslParam
 {
     private final String name;
@@ -63,5 +65,13 @@ class RepeatingParamGroup extends DslParam
     public boolean hasValue()
     {
         return !values.isEmpty();
+    }
+
+    @Override
+    String[] rawArgs()
+    {
+        return values.stream()
+                .flatMap(val -> stream(val.rawArgs()))
+                .toArray(String[]::new);
     }
 }

@@ -17,11 +17,15 @@ package com.lmax.simpledsl.internal;
 
 import com.lmax.simpledsl.api.DslArg;
 import com.lmax.simpledsl.api.DslParams;
+import com.lmax.simpledsl.api.OptionalArg;
+import com.lmax.simpledsl.api.RepeatingArgGroup;
+import com.lmax.simpledsl.api.RequiredArg;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -262,5 +266,119 @@ public class DslParamsImplTest
         final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
 
         assertEquals(Optional.of(asList("value1", "value2")), params.valuesAsOptional("a"));
+    }
+
+    @Test
+    public void shouldCopyArguments()
+    {
+        final DslArg[] args = {new RequiredArg("a"), new RequiredArg("b"), new RequiredArg("c")};
+
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+        final SimpleDslParam bParam = new SimpleDslParam("b", singletonList("value3"));
+        final SimpleDslParam cParam = new SimpleDslParam("c", singletonList("value4"));
+
+        final Map<String, DslParam> rawParams = new HashMap<>();
+        rawParams.put("a", aParam);
+        rawParams.put("b", bParam);
+        rawParams.put("c", cParam);
+
+        final DslParams params = new DslParamsImpl(args, rawParams);
+
+        assertArrayEquals(new String[]{"a: value1", "a: value2", "b: value3"}, params.copyArgs("a", "b"));
+    }
+
+    @Test
+    public void shouldCopyArgumentWhenOptionalArgumentWasNotSupplied()
+    {
+        final DslArg[] args = {new RequiredArg("a"), new RequiredArg("b"), new OptionalArg("c")};
+
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+        final SimpleDslParam bParam = new SimpleDslParam("b", singletonList("value3"));
+        final SimpleDslParam cParam = new SimpleDslParam("c", emptyList());
+
+        final Map<String, DslParam> rawParams = new HashMap<>();
+        rawParams.put("a", aParam);
+        rawParams.put("b", bParam);
+        rawParams.put("c", cParam);
+
+        final DslParams params = new DslParamsImpl(args, rawParams);
+
+        assertArrayEquals(new String[]{"a: value1", "a: value2"}, params.copyArgs("a", "c"));
+    }
+
+    @Test
+    public void shouldCopyArgumentIncludingARepeatingGroup()
+    {
+        final RequiredArg groupArg = new RequiredArg("c");
+        final DslArg[] args = {
+                new RequiredArg("a"),
+                new RequiredArg("b"),
+                new RepeatingArgGroup(groupArg)
+        };
+
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+        final SimpleDslParam bParam = new SimpleDslParam("b", singletonList("value3"));
+        final RepeatingParamGroup gParam = new RepeatingParamGroup("c", singletonList(
+                new RepeatingParamValues(new DslArg[]{groupArg}, Collections.singletonMap("c", singletonList("value3")))
+        ));
+
+        final Map<String, DslParam> rawParams = new HashMap<>();
+        rawParams.put("a", aParam);
+        rawParams.put("b", bParam);
+        rawParams.put("c", gParam);
+
+        final DslParams params = new DslParamsImpl(args, rawParams);
+
+        assertArrayEquals(new String[]{"a: value1", "a: value2", "c: value3"}, params.copyArgs("a", "c"));
+    }
+
+    @Test
+    public void shouldCopyArgumentIncludingARepeatingGroupWithMultipleArguments()
+    {
+        final RequiredArg groupArg = new RequiredArg("c");
+        final RequiredArg otherGroupArg = new RequiredArg("d");
+        final DslArg[] args = {
+                new RequiredArg("a"),
+                new RequiredArg("b"),
+                new RepeatingArgGroup(groupArg, otherGroupArg)
+        };
+
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+        final SimpleDslParam bParam = new SimpleDslParam("b", singletonList("value3"));
+
+        final Map<String, List<String>> rawGroupParams = new HashMap<>();
+        rawGroupParams.put("c", singletonList("value3"));
+        rawGroupParams.put("d", asList("value4", "value5"));
+        final RepeatingParamGroup gParam = new RepeatingParamGroup("c", singletonList(
+                new RepeatingParamValues(new DslArg[]{groupArg, otherGroupArg}, rawGroupParams)
+        ));
+
+        final Map<String, DslParam> rawParams = new HashMap<>();
+        rawParams.put("a", aParam);
+        rawParams.put("b", bParam);
+        rawParams.put("c", gParam);
+
+        final DslParams params = new DslParamsImpl(args, rawParams);
+
+        assertArrayEquals(new String[]{"a: value1", "a: value2", "c: value3", "d: value4", "d: value5"}, params.copyArgs("a", "c"));
+    }
+
+    @Test
+    public void shouldCopyArgumentsOnlyOnceEvenIfSpecifiedMultipleTimes()
+    {
+        final DslArg[] args = {new RequiredArg("a"), new RequiredArg("b"), new RequiredArg("c")};
+
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+        final SimpleDslParam bParam = new SimpleDslParam("b", singletonList("value3"));
+        final SimpleDslParam cParam = new SimpleDslParam("c", emptyList());
+
+        final Map<String, DslParam> rawParams = new HashMap<>();
+        rawParams.put("a", aParam);
+        rawParams.put("b", bParam);
+        rawParams.put("c", cParam);
+
+        final DslParams params = new DslParamsImpl(args, rawParams);
+
+        assertArrayEquals(new String[]{"a: value1", "a: value2"}, params.copyArgs("a", "a", "a"));
     }
 }

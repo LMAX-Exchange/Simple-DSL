@@ -53,6 +53,12 @@ class SimpleDslParam extends DslParam
         return !values.isEmpty();
     }
 
+    @Override
+    String[] rawArgs()
+    {
+        return values.stream().map(val -> name + ": " + val).toArray(String[]::new);
+    }
+
     /**
      * Get the value for this parameter. If multiple values are allowed, use {@link #getValues()} instead.
      *
