@@ -24,6 +24,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -74,7 +77,7 @@ public class DslParamsImplTest
 
         final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
 
-        assertArrayEquals(new String[] {"Hello World", "Goodbye, Cruel World"}, params.values("a"));
+        assertArrayEquals(new String[]{"Hello World", "Goodbye, Cruel World"}, params.values("a"));
     }
 
     @Test
@@ -85,7 +88,7 @@ public class DslParamsImplTest
         final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
 
         assertArrayEquals(
-                new Object[] {TestValues.VALUE_1, TestValues.VALUE_2},
+                new Object[]{TestValues.VALUE_1, TestValues.VALUE_2},
                 params.valuesAs("a", TestValues::valueOf)
         );
     }
@@ -98,7 +101,7 @@ public class DslParamsImplTest
         final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
 
         assertArrayEquals(
-                new TestValues[] {TestValues.VALUE_1, TestValues.VALUE_2},
+                new TestValues[]{TestValues.VALUE_1, TestValues.VALUE_2},
                 params.valuesAs("a", TestValues.class, TestValues::valueOf)
         );
     }
@@ -111,7 +114,7 @@ public class DslParamsImplTest
         final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
 
         assertArrayEquals(
-                new TestValues[] {TestValues.VALUE_1, TestValues.VALUE_2},
+                new TestValues[]{TestValues.VALUE_1, TestValues.VALUE_2},
                 params.valuesAs("a", TestValues.class)
         );
     }
@@ -242,6 +245,26 @@ public class DslParamsImplTest
         final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
 
         assertNull(params.valueAsParam("a"));
+    }
+
+    @Test
+    public void shouldReturnValueAsNamedParamForOptionalValueThatWasSpecified()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", singletonList("value"));
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertEquals("b: value", params.valueAsParamNamed("a", "b"));
+    }
+
+    @Test
+    public void shouldReturnNullValueAsNamedParamWhenSimpleDslParamNotSpecified()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", emptyList());
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertNull(params.valueAsParamNamed("a", "b"));
     }
 
     @Test
@@ -445,6 +468,36 @@ public class DslParamsImplTest
         final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
 
         assertEquals(Optional.empty(), params.valuesAsOptional("a"));
+    }
+
+    @Test
+    public void shouldReturnEmptyOptionalIntWhenNoValuesAreSupplied()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", emptyList());
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertEquals(OptionalInt.empty(), params.valuesAsOptionalInt("a"));
+    }
+
+    @Test
+    public void shouldReturnEmptyOptionalLongWhenNoValuesAreSupplied()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", emptyList());
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertEquals(OptionalLong.empty(), params.valuesAsOptionalLong("a"));
+    }
+
+    @Test
+    public void shouldReturnEmptyOptionalDoubleWhenNoValuesAreSupplied()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", emptyList());
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertEquals(OptionalDouble.empty(), params.valuesAsOptionalDouble("a"));
     }
 
     @Test
