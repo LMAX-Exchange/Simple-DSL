@@ -16,6 +16,8 @@
 
 package com.lmax.simpledsl.api;
 
+import static java.util.Arrays.stream;
+
 /**
  * The root type for all simple args.
  */
@@ -96,7 +98,8 @@ public abstract class SimpleDslArg implements DslArg
 
     /**
      * Restrict the allowed values for this argument to the specified set.
-     * Specifying a value outside of this set will result in an exception being thrown when parsing the arguments.
+     * <p>
+     * Specifying a value outside this set will result in an exception being thrown when parsing the arguments.
      *
      * @param allowedValues the allowable values for this argument.
      * @return this argument
@@ -105,6 +108,35 @@ public abstract class SimpleDslArg implements DslArg
     {
         this.allowedValues = allowedValues;
         return this;
+    }
+
+    /**
+     * Restrict the allowed values for this argument to the specified set.
+     * <p>
+     * Specifying a value outside this set will result in an exception being thrown when parsing the arguments.
+     *
+     * @param <T> the type
+     * @param clazz the {@link Class} that provides the allowed values.
+     * @return this argument
+     * @throws IllegalArgumentException if allowed values cannot be determined from the provided class
+     */
+    public <T> SimpleDslArg setAllowedValues(final Class<T> clazz)
+    {
+        if (Boolean.class.isAssignableFrom(clazz))
+        {
+            return setAllowedValues("true", "false");
+        }
+        else if (Enum.class.isAssignableFrom(clazz))
+        {
+            return setAllowedValues(
+                    stream(clazz.getEnumConstants())
+                            .map(constant -> (Enum<?>) constant)
+                            .map(Enum::name)
+                            .toArray(String[]::new)
+            );
+        }
+
+        throw new IllegalArgumentException("Cannot assign allowed values from class " + clazz.getName());
     }
 
     /**

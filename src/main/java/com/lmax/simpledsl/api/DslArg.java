@@ -37,7 +37,7 @@ public interface DslArg
 
     /**
      * Get a default value for this argument.
-     *
+     * <p>
      * If the argument is required, this method will throw an {@link IllegalArgumentException}.
      *
      * @return the default value for the argument

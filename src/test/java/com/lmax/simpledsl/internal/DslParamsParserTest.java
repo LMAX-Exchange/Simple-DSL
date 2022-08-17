@@ -626,7 +626,79 @@ class DslParamsParserTest
     }
 
     @Test
-    public void shouldThrowAnExceptionIfRequiredArgeterMissingFromGroup()
+    public void shouldMatchAllowedValuesSpecifiedViaABoolean()
+    {
+        final String[] args = {
+                "thisWorks: true",
+        };
+        final DslArg[] parameters = {
+                new RequiredArg("thisWorks").setAllowedValues(Boolean.class),
+        };
+
+        final DslParamsParser parser = new DslParamsParser();
+
+        final DslParams params = parser.parse(args, parameters);
+
+        assertTrue(params.valueAsBoolean("thisWorks"));
+    }
+
+    @Test
+    public void shouldThrowAnExceptionIfValuesDoesNotMatchAllowedValuesSpecifiedViaABoolean()
+    {
+        final String[] args = {
+                "thisWorks: NO",
+        };
+        final DslArg[] parameters = {
+                new RequiredArg("thisWorks").setAllowedValues(Boolean.class),
+        };
+
+        final DslParamsParser parser = new DslParamsParser();
+
+        final IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> parser.parse(args, parameters));
+
+        assertEquals("thisWorks parameter value 'NO' must be one of: [true, false]", exception.getMessage());
+    }
+
+    @Test
+    public void shouldMatchAllowedValuesSpecifiedViaAnEnum()
+    {
+        final String[] args = {
+                "pet: DRAGON",
+        };
+        final DslArg[] parameters = {
+                new RequiredArg("pet").setAllowedValues(PossiblePets.class),
+        };
+
+        final DslParamsParser parser = new DslParamsParser();
+
+        final DslParams params = parser.parse(args, parameters);
+
+        assertEquals("DRAGON", params.value("pet"));
+    }
+
+    @Test
+    public void shouldThrowAnExceptionIfValuesDoesNotMatchAllowedValuesSpecifiedViaAnEnum()
+    {
+        final String[] args = {
+                "pet: UNICORN",
+        };
+        final DslArg[] parameters = {
+                new RequiredArg("pet").setAllowedValues(PossiblePets.class),
+        };
+
+        final DslParamsParser parser = new DslParamsParser();
+
+        final IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> parser.parse(args, parameters));
+
+        assertEquals("pet parameter value 'UNICORN' must be one of: [COW, SHEEP, GOAT, DRAGON]", exception.getMessage());
+    }
+
+    @Test
+    public void shouldThrowAnExceptionIfRequiredParameterMissingFromGroup()
     {
         final String[] args = {"a: value", "myGroup: Joe", "myGroup: Jenny", "myValue: 2"};
         final DslArg[] params = {
@@ -804,5 +876,13 @@ class DslParamsParserTest
         );
 
         assertEquals("Unexpected ambiguous argument 1", exception.getMessage());
+    }
+
+    private enum PossiblePets
+    {
+        COW,
+        SHEEP,
+        GOAT,
+        DRAGON
     }
 }
