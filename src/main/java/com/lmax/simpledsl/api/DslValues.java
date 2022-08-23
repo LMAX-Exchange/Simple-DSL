@@ -22,6 +22,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -277,6 +280,34 @@ public interface DslValues
     }
 
     /**
+     * Retrieve the value supplied for a parameter formatted as a parameter with the given name.
+     * For example, if the parameter {@literal user} was given the value {@literal jenny}, then
+     * {@code valueAsParamNamed("user", "person")} would return {@code person: jenny}.
+     * <p>
+     * This is useful when reusing DSL methods to build higher level functions. e.g.
+     *
+     * <pre>{@code
+     *   public void createUserAndLogin(String... args) {
+     *     DslParams params = new DslParams(args,
+     *                                      new RequiredParam("user"),
+     *                                      new RequiredParam("accountType"));
+     *     generateRandomUser(params.valueAsParamNamed("user", "rememberUserAs"));
+     *     login(params.valueAsParam("user"), "password: password");
+     *   }
+     * }</pre>
+     *
+     * @param oldParamName the name of the parameter.
+     * @param newParamName the new name of the parameter.
+     * @return the value supplied for that parameter, formatted as a parameter ready to pass on to another method that uses Simple-DSL.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter or if the parameter supports multiple values.
+     */
+    default String valueAsParamNamed(final String oldParamName, final String newParamName)
+    {
+        final String value = value(oldParamName);
+        return value != null ? newParamName + ": " + value : null;
+    }
+
+    /**
      * Retrieve the values supplied for a parameter as a {@link List}. Returns an empty list if the parameter is optional and a value has not been supplied.
      *
      * @param name the name of the parameter.
@@ -305,7 +336,7 @@ public interface DslValues
     /**
      * Retrieve the values supplied for a parameter as an {@link Optional} {@link List}.
      * <p>
-     * Returns an empty Optional if the parameter is optional and a value has not been supplied.
+     * Returns an {@link Optional#empty() empty Optional} if the parameter is optional and a value has not been supplied.
      * <p>
      * In most cases {@link #valuesAsList} is the more suitable method.
      * This variant is useful if there is an important difference between a parameter being set to an empty list vs not being supplied.
@@ -329,6 +360,48 @@ public interface DslValues
     {
         return Optional.of(valuesAsList(name))
                 .filter(list -> !list.isEmpty());
+    }
+
+    /**
+     * Retrieve the values supplied for a parameter as an {@link OptionalInt}.
+     * <p>
+     * Returns an {@link OptionalInt#empty() empty Optional} if the parameter is optional and a value has not been supplied.
+     *
+     * @param name the name of the parameter.
+     * @return the value of the parameter, or empty
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
+     */
+    default OptionalInt valuesAsOptionalInt(final String name)
+    {
+        return hasValue(name) ? OptionalInt.of(valueAsInt(name)) : OptionalInt.empty();
+    }
+
+    /**
+     * Retrieve the values supplied for a parameter as an {@link OptionalLong}.
+     * <p>
+     * Returns an {@link OptionalLong#empty() empty Optional} if the parameter is optional and a value has not been supplied.
+     *
+     * @param name the name of the parameter.
+     * @return the value of the parameter, or empty
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
+     */
+    default OptionalLong valuesAsOptionalLong(final String name)
+    {
+        return hasValue(name) ? OptionalLong.of(valueAsLong(name)) : OptionalLong.empty();
+    }
+
+    /**
+     * Retrieve the values supplied for a parameter as an {@link OptionalDouble}.
+     * <p>
+     * Returns an {@link OptionalDouble#empty() empty Optional} if the parameter is optional and a value has not been supplied.
+     *
+     * @param name the name of the parameter.
+     * @return the value of the parameter, or empty
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
+     */
+    default OptionalDouble valuesAsOptionalDouble(final String name)
+    {
+        return hasValue(name) ? OptionalDouble.of(valueAsInt(name)) : OptionalDouble.empty();
     }
 
     /**
