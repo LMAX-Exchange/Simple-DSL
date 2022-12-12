@@ -22,7 +22,6 @@ import com.lmax.simpledsl.api.OptionalArg;
 import com.lmax.simpledsl.api.RepeatingArgGroup;
 import com.lmax.simpledsl.api.RepeatingGroup;
 import com.lmax.simpledsl.api.RequiredArg;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -491,7 +490,6 @@ class DslParamsParserTest
     }
 
     @Test
-    @Disabled("Doesn't work?")
     public void shouldBeAbleToSpecifyMultipleValuesForParamInGroupUsingTheDefaultSeparator()
     {
         final String[] args = {"a: value", "group: Joe", "group: Jenny", "value: 1, 2"};
@@ -518,7 +516,6 @@ class DslParamsParserTest
     }
 
     @Test
-    @Disabled("Doesn't work?")
     public void shouldBeAbleToSpecifyMultipleValuesForParamInGroupUsingACustomSeparator()
     {
         final String[] args = {"a: value", "group: Joe", "group: Jenny", "value: 1;2"};
