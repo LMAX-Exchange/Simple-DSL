@@ -61,9 +61,7 @@ final class DslParamsImpl implements DslParams
     @Override
     public boolean hasValue(final String name)
     {
-        return findDslParam(name)
-                .map(DslParam::hasValue)
-                .orElse(false);
+        return getDslParam(name).hasValue();
     }
 
     @Override
