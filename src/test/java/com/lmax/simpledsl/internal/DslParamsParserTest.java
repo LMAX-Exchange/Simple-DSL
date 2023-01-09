@@ -226,6 +226,25 @@ class DslParamsParserTest
     }
 
     @Test
+    public void shouldBeAbleToExtractMultipleValuesForOneParameterUsingTheACustomSeparatorAndIgnoreRegex()
+    {
+        final String[] args = {"a=1", "b=2,00.3,00", "c=4[a-z]5"};
+        final DslArg[] parameters = {
+                new RequiredArg("a"),
+                new RequiredArg("b").setAllowMultipleValues("."),
+                new RequiredArg("c").setAllowMultipleValues("[a-z]")
+        };
+
+        final DslParamsParser parser = new DslParamsParser();
+
+        final DslParams params = parser.parse(args, parameters);
+
+        assertEquals("1", params.value("a"));
+        assertArrayEquals(new String[]{"2,00", "3,00"}, params.values("b"));
+        assertArrayEquals(new String[]{"4", "5"}, params.values("c"));
+    }
+
+    @Test
     public void shouldBeAbleToExtractMultipleRequiredArgsWhenSubsequentRequiredArgsAreNotNamed()
     {
         final String[] args = {"a=1", "b=2", "3", "c=4"};
