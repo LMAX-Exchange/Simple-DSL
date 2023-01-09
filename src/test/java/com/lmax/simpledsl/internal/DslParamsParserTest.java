@@ -22,7 +22,6 @@ import com.lmax.simpledsl.api.OptionalArg;
 import com.lmax.simpledsl.api.RepeatingArgGroup;
 import com.lmax.simpledsl.api.RepeatingGroup;
 import com.lmax.simpledsl.api.RequiredArg;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -491,7 +490,6 @@ class DslParamsParserTest
     }
 
     @Test
-    @Disabled("Doesn't work?")
     public void shouldBeAbleToSpecifyMultipleValuesForParamInGroupUsingTheDefaultSeparator()
     {
         final String[] args = {"a: value", "group: Joe", "group: Jenny", "value: 1, 2"};
@@ -518,7 +516,6 @@ class DslParamsParserTest
     }
 
     @Test
-    @Disabled("Doesn't work?")
     public void shouldBeAbleToSpecifyMultipleValuesForParamInGroupUsingACustomSeparator()
     {
         final String[] args = {"a: value", "group: Joe", "group: Jenny", "value: 1;2"};
@@ -623,6 +620,28 @@ class DslParamsParserTest
         final DslParams params = parser.parse(args, parameters);
 
         assertArrayEquals(new String[]{"abc", "def"}, params.values("myValue"));
+    }
+
+    @Test
+    public void shouldMatchAllowedValuesCaseInsensitivelyAndReturnValuesUsingTheCaseProvidedInTheDSLWithinRepeatingGroups()
+    {
+        final String[] args = {"a: value", "myGroup: joe", "myValue: a"};
+        final DslArg[] parameters = {
+                new RequiredArg("a"),
+                new RepeatingArgGroup(
+                        new RequiredArg("myGroup").setAllowedValues("Joe", "Jenny"),
+                        new RequiredArg("myValue").setAllowedValues("A", "B"))
+        };
+
+        final DslParamsParser parser = new DslParamsParser();
+
+        final DslParams params = parser.parse(args, parameters);
+
+        assertEquals("value", params.value("a"));
+        final RepeatingGroup[] groups = params.valuesAsGroup("myGroup");
+        assertEquals(1, groups.length);
+        assertEquals("Joe", groups[0].value("myGroup"));
+        assertEquals("A", groups[0].value("myValue"));
     }
 
     @Test
@@ -768,6 +787,26 @@ class DslParamsParserTest
                 () -> parser.parse(args, parameters));
 
         assertEquals("myValue parameter value '1' must be one of: [A, B]", exception.getMessage());
+    }
+
+    @Test
+    public void shouldThrowAnExceptionIfInvalidParameterValueIsSpecifiedInRepeatingGroupIdentity()
+    {
+        final String[] args = {"a: value", "myGroup: Joe", "myValue: 1"};
+        final DslArg[] parameters = {
+                new RequiredArg("a"),
+                new RepeatingArgGroup(
+                        new RequiredArg("myGroup").setAllowedValues("A", "B"),
+                        new RequiredArg("myValue"))
+        };
+
+        final DslParamsParser parser = new DslParamsParser();
+
+        final IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> parser.parse(args, parameters));
+
+        assertEquals("myGroup parameter value 'Joe' must be one of: [A, B]", exception.getMessage());
     }
 
     @Test

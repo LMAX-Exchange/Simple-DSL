@@ -312,8 +312,7 @@ public class DslParamsParser
                     break;
                 }
 
-                checkValidValue(arg, argument.value);
-                argValues.add(argument.value);
+                SimpleArgumentProcessor.addValue(arg, argument.value, argValues);
                 arguments.pollFirst();
             }
 
