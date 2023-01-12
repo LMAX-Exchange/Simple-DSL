@@ -179,4 +179,18 @@ public class RepeatingParamValuesTest
 
         assertEquals("values() should be used when multiple values are allowed", exception.getMessage());
     }
+
+    @Test
+    public void shouldRetrieveValueCaseWithACaseInsensitiveKey()
+    {
+        final RequiredArg requiredArg = new RequiredArg("foo");
+        final OptionalArg otherArg = new OptionalArg("bar");
+        final Map<String, List<String>> values = new HashMap<>();
+        values.put("foo", Collections.singletonList(""));
+        values.put("bar", Collections.singletonList("123"));
+        final RepeatingParamValues params = new RepeatingParamValues(asList(requiredArg, otherArg).toArray(new DslArg[0]), values);
+
+        assertTrue(params.hasValue("Bar"));
+        assertEquals("123", params.value("BAR"));
+    }
 }

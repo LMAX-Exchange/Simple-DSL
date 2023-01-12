@@ -59,7 +59,7 @@ class RepeatingParamValues implements RepeatingGroup
     private List<String> getValues(final String name)
     {
 
-        if (name == null || stream(dslArgs).noneMatch(arg -> arg.getName().equals(name.toLowerCase())))
+        if (name == null || stream(dslArgs).noneMatch(arg -> arg.getName().equalsIgnoreCase(name)))
         {
             throw new IllegalArgumentException(String.format("Parameter %s does not exist in this repeating group", name));
         }
