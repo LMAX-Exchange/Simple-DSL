@@ -85,6 +85,7 @@ public interface DslValues
      * Determine if a parameter is defined and has a value.
      * <p>
      * Returns true when the parameter is defined and supplied with an empty value.
+     *
      * @param name the name of the parameter.
      * @return true if the parameter is defined and has a value, otherwise false.
      */
