@@ -50,6 +50,16 @@ public interface DslValues
     boolean hasValue(String name);
 
     /**
+     * Determine if a parameter is defined.
+     * <p>
+     * Returns true when the parameter is defined.
+     *
+     * @param name the name of the parameter.
+     * @return true if the parameter is defined, otherwise false.
+     */
+    boolean hasParam(String name);
+
+    /**
      * Retrieve the value supplied for a parameter.
      * <p>
      * May return {@code null} if the parameter is optional and a value has not been supplied.

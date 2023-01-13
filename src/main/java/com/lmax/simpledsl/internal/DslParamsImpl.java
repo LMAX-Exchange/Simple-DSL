@@ -67,6 +67,12 @@ final class DslParamsImpl implements DslParams
     }
 
     @Override
+    public boolean hasParam(final String name)
+    {
+        return findDslParam(name).isPresent();
+    }
+
+    @Override
     public DslArg[] getParams()
     {
         return args;

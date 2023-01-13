@@ -510,6 +510,27 @@ public class DslParamsImplTest
         assertEquals(Optional.of(asList("value1", "value2")), params.valuesAsOptional("a"));
     }
 
+    @Test
+    public void shouldReturnIfAParamHasBeenDefined()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertTrue(params.hasParam("a"));
+        assertFalse(params.hasParam("b"));
+    }
+
+    @Test
+    public void shouldReturnIfAParamHasBeenDefinedCaseInsensitively()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertTrue(params.hasParam("A"));
+    }
+
     private enum TestValues
     {
         VALUE_1,
