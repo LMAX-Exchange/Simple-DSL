@@ -29,6 +29,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Parser for transforming a specification of {@link DslArg DslArgs} and a set of provided {@link String} values into
@@ -215,7 +216,7 @@ public class DslParamsParser
         {
             if (arg.isAllowMultipleValues())
             {
-                final String[] vals = value.split(arg.getMultipleValueSeparator());
+                final String[] vals = value.split(Pattern.quote(arg.getMultipleValueSeparator()));
                 for (final String singleValue : vals)
                 {
                     addSingleValue(arg, singleValue.trim(), values);
