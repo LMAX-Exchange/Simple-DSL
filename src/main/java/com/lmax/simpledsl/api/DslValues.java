@@ -82,6 +82,18 @@ public interface DslValues
     String[] values(String name);
 
     /**
+     * Determine if a parameter is defined and has a value.
+     * <p>
+     * Returns true when the parameter is defined and supplied with an empty value.
+     * @param name the name of the parameter.
+     * @return true if the parameter is defined and has a value, otherwise false.
+     */
+    default boolean hasParamAndValue(String name)
+    {
+        return hasParam(name) && hasValue(name);
+    }
+
+    /**
      * Retrieve the value supplied for a parameter, mapping it using the specified {@link Function function}.
      *
      * @param name   the name of the parameter.
