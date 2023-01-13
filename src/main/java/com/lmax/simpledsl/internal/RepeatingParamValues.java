@@ -22,7 +22,8 @@ class RepeatingParamValues implements RepeatingGroup
     @Override
     public boolean hasValue(final String name)
     {
-        return !getValues(name).isEmpty();
+        final List<String> values = getValues(name);
+        return !(values == null || values.isEmpty());
 
     }
 

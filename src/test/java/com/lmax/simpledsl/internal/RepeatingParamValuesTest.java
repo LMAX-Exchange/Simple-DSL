@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -113,7 +112,6 @@ public class RepeatingParamValuesTest
         final OptionalArg otherArg = new OptionalArg("bar");
         final Map<String, List<String>> values = new HashMap<>();
         values.put("foo", Collections.singletonList("abc"));
-        values.put("bar", emptyList());
         final RepeatingParamValues params = new RepeatingParamValues(asList(requiredArg, otherArg).toArray(new DslArg[0]), values);
 
         assertFalse(params.hasValue("bar"));
