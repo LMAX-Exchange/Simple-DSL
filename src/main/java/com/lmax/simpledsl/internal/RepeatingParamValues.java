@@ -6,6 +6,8 @@ import com.lmax.simpledsl.api.RepeatingGroup;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.stream;
+
 class RepeatingParamValues implements RepeatingGroup
 {
     private final DslArg[] dslArgs;
@@ -21,6 +23,12 @@ class RepeatingParamValues implements RepeatingGroup
     public boolean hasValue(final String name)
     {
         return valuesByName.containsKey(name.toLowerCase());
+    }
+
+    @Override
+    public boolean hasParam(final String name)
+    {
+        return stream(dslArgs).anyMatch(arg -> arg.getName().equalsIgnoreCase(name));
     }
 
     @Override

@@ -50,6 +50,16 @@ public interface DslValues
     boolean hasValue(String name);
 
     /**
+     * Determine if a parameter is defined.
+     * <p>
+     * Returns true when the parameter is defined.
+     *
+     * @param name the name of the parameter.
+     * @return true if the parameter is defined, otherwise false.
+     */
+    boolean hasParam(String name);
+
+    /**
      * Retrieve the value supplied for a parameter.
      * <p>
      * May return {@code null} if the parameter is optional and a value has not been supplied.
@@ -70,6 +80,19 @@ public interface DslValues
      * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
      */
     String[] values(String name);
+
+    /**
+     * Determine if a parameter is defined and has a value.
+     * <p>
+     * Returns true when the parameter is defined and supplied with an empty value.
+     *
+     * @param name the name of the parameter.
+     * @return true if the parameter is defined and has a value, otherwise false.
+     */
+    default boolean hasParamAndValue(String name)
+    {
+        return hasParam(name) && hasValue(name);
+    }
 
     /**
      * Retrieve the value supplied for a parameter, mapping it using the specified {@link Function function}.

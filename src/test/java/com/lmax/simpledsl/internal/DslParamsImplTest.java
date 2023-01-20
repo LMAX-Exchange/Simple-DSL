@@ -30,6 +30,7 @@ import java.util.OptionalLong;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -508,6 +509,75 @@ public class DslParamsImplTest
         final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
 
         assertEquals(Optional.of(asList("value1", "value2")), params.valuesAsOptional("a"));
+    }
+
+    @Test
+    public void shouldReturnTrueIfAParamHasBeenDefined()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertTrue(params.hasParam("a"));
+    }
+
+    @Test
+    public void shouldReturnFalseIfAParamHasNotBeenDefined()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertFalse(params.hasParam("b"));
+    }
+
+    @Test
+    public void shouldReturnIfAParamHasBeenDefinedCaseInsensitively()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertTrue(params.hasParam("A"));
+    }
+
+    @Test
+    public void shouldReturnTrueIfAParamHasBeenDefinedAndHasAValue()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertTrue(params.hasParamAndValue("a"));
+    }
+
+    @Test
+    public void shouldReturnFalseIfAParamHasBeenDefinedButDoesNotHaveAValue()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", emptyList());
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertFalse(params.hasParamAndValue("a"));
+    }
+
+    @Test
+    public void shouldReturnFalseIfAParamHasNotBeenDefinedButDoesNotHaveAValue()
+    {
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], emptyMap());
+
+        assertFalse(params.hasParamAndValue("a"));
+    }
+
+    @Test
+    public void shouldReturnIfAParamHasBeenDefinedHasAValueCaseInsensitively()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        assertTrue(params.hasParamAndValue("A"));
     }
 
     private enum TestValues
