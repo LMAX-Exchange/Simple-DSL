@@ -22,7 +22,9 @@ class RepeatingParamValues implements RepeatingGroup
     @Override
     public boolean hasValue(final String name)
     {
-        return valuesByName.containsKey(name.toLowerCase());
+        final List<String> values = getValues(name);
+        return !(values == null || values.isEmpty());
+
     }
 
     @Override
@@ -35,6 +37,10 @@ class RepeatingParamValues implements RepeatingGroup
     public String value(final String name)
     {
         final String[] strings = values(name);
+        if (strings.length > 1)
+        {
+            throw new IllegalArgumentException("values() should be used when multiple values are allowed");
+        }
         return strings.length > 0 ? strings[0] : null;
     }
 
@@ -53,6 +59,12 @@ class RepeatingParamValues implements RepeatingGroup
 
     private List<String> getValues(final String name)
     {
-        return name != null ? valuesByName.get(name.toLowerCase()) : null;
+
+        if (name == null || stream(dslArgs).noneMatch(arg -> arg.getName().equalsIgnoreCase(name)))
+        {
+            throw new IllegalArgumentException(String.format("Parameter %s does not exist in this repeating group", name));
+        }
+
+        return valuesByName.get(name.toLowerCase());
     }
 }

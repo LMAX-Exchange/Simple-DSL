@@ -580,10 +580,51 @@ public class DslParamsImplTest
         assertTrue(params.hasParamAndValue("A"));
     }
 
+    @Test
+    void shouldThrowIllegalArgumentExceptionIfParameterDoesNotExist()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        final IllegalArgumentException exception1 = assertThrows(IllegalArgumentException.class,
+                () -> params.value("b")
+        );
+        final IllegalArgumentException exception2 = assertThrows(IllegalArgumentException.class,
+                () -> params.values("b")
+        );
+        final IllegalArgumentException exception3 = assertThrows(IllegalArgumentException.class,
+                () -> params.hasValue("b")
+        );
+        final IllegalArgumentException exception4 = assertThrows(IllegalArgumentException.class,
+                () -> params.valuesAsGroup("b")
+        );
+
+        assertEquals("b is not a parameter", exception1.getMessage());
+        assertEquals("b is not a parameter", exception2.getMessage());
+        assertEquals("b is not a parameter", exception3.getMessage());
+        assertEquals("b is not a parameter", exception4.getMessage());
+    }
+
+    @Test
+    void shouldThrowIllegalArgumentExceptionIfParameterIsNotARepeatingGroup()
+    {
+        final SimpleDslParam aParam = new SimpleDslParam("a", asList("value1", "value2"));
+
+        final DslParams params = new DslParamsImpl(new DslArg[0], Collections.singletonMap("a", aParam));
+
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> params.valuesAsGroup("a")
+        );
+
+        assertEquals("a is not a repeating group", exception.getMessage());
+
+    }
+
     private enum TestValues
     {
         VALUE_1,
         VALUE_2,
-        VALUE_3;
+        VALUE_3
     }
 }

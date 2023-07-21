@@ -646,7 +646,7 @@ class DslParamsParserTest
     {
         final String[] args = {"a: value", "myGroup: joe", "myValue: a"};
         final DslArg[] parameters = {
-                new RequiredArg("a"),
+                new RequiredArg("A"),
                 new RepeatingArgGroup(
                         new RequiredArg("myGroup").setAllowedValues("Joe", "Jenny"),
                         new RequiredArg("myValue").setAllowedValues("A", "B"))
@@ -659,8 +659,8 @@ class DslParamsParserTest
         assertEquals("value", params.value("a"));
         final RepeatingGroup[] groups = params.valuesAsGroup("myGroup");
         assertEquals(1, groups.length);
-        assertEquals("Joe", groups[0].value("myGroup"));
-        assertEquals("A", groups[0].value("myValue"));
+        assertEquals("Joe", groups[0].values("myGroup")[0]);
+        assertEquals("A", groups[0].values("myValue")[0]);
     }
 
     @Test
