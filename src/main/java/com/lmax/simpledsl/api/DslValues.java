@@ -165,7 +165,7 @@ public interface DslValues
      * <p>
      * Returns an empty {@link Stream} if the parameter is optional and a value has not been supplied.
      *
-     * @param name   the name of the parameter.
+     * @param name     the name of the parameter.
      * @param enumType the {@link Enum} type.
      * @param <T>      the {@link Enum} type.
      * @return a {@link Stream} of values supplied for the parameter.
@@ -328,6 +328,76 @@ public interface DslValues
     {
         final String value = value(oldParamName);
         return value != null ? newParamName + ": " + value : null;
+    }
+
+    /**
+     * Retrieve the value supplied for a parameter formatted as a parameter with multiple values. For example, if the parameter {@literal users} was given the value {@literal jenny, john},
+     * then {@code valuesAsParam("user")} would return {@code user: jenny,john}. The delimiter takes whichever value is defined in the parameter definition.
+     * <p>
+     * This is useful when reusing DSL methods to build higher level functions. e.g.
+     *
+     * <pre>{@code
+     *   public void createUserAndLogin(String... args) {
+     *     DslParams params = new DslParams(args,
+     *                                      new RequiredParam("user"),
+     *                                      new RequiredParam("accountTypes").setAllowMultipleValues(";")
+     *                                      );
+     *     createUser(params.valueAsParam("user"), "password: password", params.valuesAsParam("accountTypes");
+     *     login(params.valueAsParam("user"), "password: password");
+     *   }
+     * }</pre>
+     *
+     * @param name the name of the parameter.
+     * @return the value supplied for that parameter, formatted as a parameter ready to pass on to another method that uses Simple-DSL.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
+     */
+    default String valuesAsParam(final String name)
+    {
+        final String[] values = values(name);
+        final String delimiter = stream(getParams())
+                .filter(arg -> arg.getName().equals(name.toLowerCase()))
+                .findFirst()
+                .map(DslArg::getMultipleValueSeparator)
+                .orElseThrow(() -> new IllegalArgumentException(name + " is not a parameter"));
+
+
+        return values.length != 0 ? name + ": " + String.join(delimiter, values) : null;
+    }
+
+    /**
+     * Retrieve the value supplied for a parameter formatted as a parameter with the given name.
+     * For example, if the parameter {@literal user} was given the values {@literal jenny, john}, then
+     * {@code valuesAsParamNamed("user", "person")} would return {@code person: jenny,john}.
+     * The delimiter takes whichever value is defined in the parameter definition.
+     * <p>
+     * This is useful when reusing DSL methods to build higher level functions. e.g.
+     *
+     * <pre>{@code
+     *   public void createUserAndLogin(String... args) {
+     *     DslParams params = new DslParams(args,
+     *                                      new RequiredParam("user"),
+     *                                      new RequiredParam("accountType").setAllowMultipleValues());
+     *     generateRandomUser(params.valueAsParamNamed("user", "rememberUserAs"), params.valuesAsParamNamed("accountType", "accounts");
+     *     login(params.valueAsParam("user"), "password: password");
+     *   }
+     * }</pre>
+     *
+     * @param oldParamName the name of the parameter.
+     * @param newParamName the new name of the parameter.
+     * @return the value supplied for that parameter, formatted as a parameter ready to pass on to another method that uses Simple-DSL.
+     * @throws IllegalArgumentException if {@code name} does not match the name of a supported parameter.
+     */
+    default String valuesAsParamNamed(final String oldParamName, final String newParamName)
+    {
+        final String[] values = values(oldParamName);
+        final String delimiter = stream(getParams())
+                .filter(arg -> arg.getName().equals(oldParamName.toLowerCase()))
+                .findFirst()
+                .map(DslArg::getMultipleValueSeparator)
+                .orElseThrow(() -> new IllegalArgumentException(oldParamName + " is not a parameter"));
+
+
+        return values.length != 0 ? newParamName + ": " + String.join(delimiter, values) : null;
     }
 
     /**

@@ -561,6 +561,74 @@ class DslParamsParserTest
     }
 
     @Test
+    public void shouldGetValuesAsAParamString()
+    {
+        final String[] args = {
+                "a: value1", "a: value2"
+        };
+        final DslArg[] parameters = {
+                new RequiredArg("a").setAllowMultipleValues(),
+        };
+
+        final DslParamsParser parser = new DslParamsParser();
+
+        final DslParams params = parser.parse(args, parameters);
+
+        assertEquals("a: value1,value2", params.valuesAsParam("a"));
+    }
+
+    @Test
+    public void shouldGetValuesAsAParamStringWithCustomDelimiter()
+    {
+        final String[] args = {
+                "a: value1", "a: value2"
+        };
+        final DslArg[] parameters = {
+                new RequiredArg("a").setAllowMultipleValues(";"),
+        };
+
+        final DslParamsParser parser = new DslParamsParser();
+
+        final DslParams params = parser.parse(args, parameters);
+
+        assertEquals("a: value1;value2", params.valuesAsParam("a"));
+    }
+
+    @Test
+    public void shouldGetValuesAsAParamStringWithDifferentName()
+    {
+        final String[] args = {
+                "a: value1", "a: value2"
+        };
+        final DslArg[] parameters = {
+                new RequiredArg("a").setAllowMultipleValues(),
+        };
+
+        final DslParamsParser parser = new DslParamsParser();
+
+        final DslParams params = parser.parse(args, parameters);
+
+        assertEquals("b: value1,value2", params.valuesAsParamNamed("a", "b"));
+    }
+
+    @Test
+    public void shouldGetValuesAsAParamStringWithCustomDelimiterWithDifferentName()
+    {
+        final String[] args = {
+                "a: value1", "a: value2"
+        };
+        final DslArg[] parameters = {
+                new RequiredArg("a").setAllowMultipleValues(";"),
+        };
+
+        final DslParamsParser parser = new DslParamsParser();
+
+        final DslParams params = parser.parse(args, parameters);
+
+        assertEquals("b: value1;value2", params.valuesAsParamNamed("a", "b"));
+    }
+
+    @Test
     public void shouldBeAbleToRetrieveGroupsOfParamsWhenSomeOptionalValuesAreOmitted()
     {
         final String[] args = {
